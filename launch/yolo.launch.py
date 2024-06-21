@@ -17,7 +17,7 @@ def generate_launch_description():
         params = yaml.safe_load(f)['yolo_ros_node']['ros__parameters']
 
     yolo_ros_node = launch_ros.actions.Node(package='yolo_ros',
-                                              executable='yolo_ros_node',
+                                              executable='yolo_ros',
                                               output='both',
                                               parameters=[params]
                                               )
