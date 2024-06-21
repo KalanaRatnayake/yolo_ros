@@ -1,19 +1,12 @@
 # yolo_ros
 
-A ros package that can load given YOLO models.
-
 ## Setup
 
-Clone this repository with
+Clone this repository with and install dependencies.
 
 ```bash
 git clone https://github.com/AIResearchLab/yolo_ros.git
-```
-
-Run following to install dependencies
-
-```bash
-cd yolo_ros/yolo_ros/YOLO
+cd yolo_ros
 pip3 install -r requirements.txt
 ```
 

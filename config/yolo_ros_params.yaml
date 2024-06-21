@@ -1,0 +1,3 @@
+yolo_ros_node:
+  ros__parameters:
+    sample: 2.1
