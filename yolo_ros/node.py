@@ -3,8 +3,8 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
 from sensor_msgs.msg import Image
+from yolo_ros_msgs.msg import YoloResult
 
-import cv2
 from cv_bridge import CvBridge
 
 from ultralytics import YOLO
@@ -14,19 +14,39 @@ class YoloROS(Node):
     def __init__(self):
         super().__init__('yolo_ros')
 
+        self.declare_parameter("yolo_model",                "yolov8n.pt")
+        self.declare_parameter("input_topic",               "/camera/color/image_raw")
+        self.declare_parameter("publish_annotated_image",   False)
+        self.declare_parameter("output_annotated_topic",    "/yolo_ros/annotated_image")
+        self.declare_parameter("output_detailed_topic",     "/yolo_ros/detection_result")
+        self.declare_parameter("confidence_threshold",      0.25)
+        self.declare_parameter("device",                    "cpu")
+
+        self.yolo_model                 = self.get_parameter("yolo_model").get_parameter_value().string_value
+        self.input_topic                = self.get_parameter("input_topic").get_parameter_value().string_value
+        self.publish_annotated_image    = self.get_parameter("publish_annotated_image").get_parameter_value().bool_value
+        self.output_annotated_topic     = self.get_parameter("output_annotated_topic").get_parameter_value().string_value
+        self.output_detailed_topic      = self.get_parameter("output_detailed_topic").get_parameter_value().string_value
+        self.confidence_threshold       = self.get_parameter("confidence_threshold").get_parameter_value().double_value
+        self.device                     = self.get_parameter("device").get_parameter_value().string_value
+
         self.bridge = CvBridge()
+        self.model  = YOLO(self.yolo_model)
 
-        self.model  = YOLO("yolov9t.pt")
+        self.model.fuse() # need to test improvement
 
-        self.subscriber_qos_profile = QoSProfile(
-            reliability=QoSReliabilityPolicy.BEST_EFFORT,
-            history=QoSHistoryPolicy.KEEP_LAST,
-            depth=1
-        )
+        self.subscriber_qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT,
+                                                 history=QoSHistoryPolicy.KEEP_LAST,
+                                                 depth=1
+                                                 )
 
-        self.subscription       = self.create_subscription(Image, '/camera/color/image_raw', self.image_callback, qos_profile=self.subscriber_qos_profile)
-        self.publisher_image    = self.create_publisher(Image, '/yolo_ros/annotated_image', 10)
+        self.subscription       = self.create_subscription(Image, self.input_topic, self.image_callback, qos_profile=self.subscriber_qos_profile)
         
+        self.publisher_results  = self.create_publisher(Image, self.output_detailed_topic, 10)
+
+        if self.publish_annotated_image:
+            self.publisher_image    = self.create_publisher(Image, self.output_annotated_topic, 10)
+
         self.subscription  # prevent unused variable warning
 
 
@@ -34,21 +54,49 @@ class YoloROS(Node):
 
         self.input_image = self.bridge.imgmsg_to_cv2(received_msg, desired_encoding="bgr8")
 
-        self.result = self.model(self.input_image, verbose=False,)
-
-        self.output_image = self.result[0].plot(
-            conf=0.25,
-            line_width=1,
-            font_size=1,
-            font="Arial.ttf",
-            labels=True,
-            boxes=True,
+        self.result = self.model.predict(
+            source = self.input_image,
+            conf=self.confidence_threshold,
+            device=self.device,
+            verbose=False
         )
-        
-        result_msg = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
 
-        self.publisher_image.publish(result_msg)
-        self.get_logger().debug('Publishing: "%s"' % result_msg.header.frame_id)
+        if self.result is not None:
+            detection_msg = YoloResult()
+
+            bounding_box = self.result[0].boxes.xywh
+            classes      = self.result[0].boxes.cls
+            conf_score   = self.result[0].boxes.conf
+            name_list    = self.result[0].names
+
+            for bbox, cls, conf in zip(bounding_box, classes, conf_score):
+                detection_msg.bbx_center_x.append(float(bbox[0]))
+                detection_msg.bbx_center_y.append(float(bbox[1]))
+                detection_msg.bbx_size_w.append(float(bbox[2]))
+                detection_msg.bbx_size_h.append(float(bbox[3]))
+                
+                detection_msg.class_name.append(name_list.get(int(cls)))
+                detection_msg.confidence.append(float(conf))
+
+            detection_msg.source_image = received_msg
+            detection_msg.header       = received_msg.header
+
+            self.publisher_results.publish(detection_msg)
+
+            if self.publish_annotated_image:
+                self.output_image = self.result[0].plot(
+                                                        conf=True,
+                                                        line_width=1,
+                                                        font_size=1,
+                                                        font="Arial.ttf",
+                                                        labels=True,
+                                                        boxes=True,
+                                                    )
+                    
+                result_msg = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
+                self.publisher_image.publish(result_msg)
+
+            self.get_logger().debug('Publishing: "%s"' % self.result[0])
 
 
 def main(args=None):
