@@ -24,6 +24,13 @@ Add the following snippet under `services` to any compose.yaml file to add this 
       - /yolo:/yolo
 ```
 
+Replace `image` parameter with following values for respective systems
+
+| System       | ROS Version | Value |
+| :---         | :---        | :---  |
+| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo:humble |
+| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo:jetson-nano-humble |
+
 ### Setup for pulling container from ghcr.io and running
 
 Clone this reposiotory

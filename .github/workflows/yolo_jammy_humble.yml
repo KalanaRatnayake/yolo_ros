@@ -1,4 +1,4 @@
-name: ROS Humble YOLO stack for amd64 system
+name: ROS Humble YOLO stack for AMD64 system
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
       - main
     paths:
       - ".github/workflows/yolo_jammy_humble.yml"
-      - "docker/Dockerfile.amd"
+      - "docker/Dockerfile.amd64"
       - "docker/workspace_entrypoint.sh"
 
   pull_request:
@@ -16,7 +16,7 @@ on:
       - main
     paths:
       - ".github/workflows/yolo_jammy_humble.yml"
-      - "docker/Dockerfile.amd"
+      - "docker/Dockerfile.amd64"
       - "docker/workspace_entrypoint.sh"
 
 env:
@@ -57,7 +57,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/Dockerfile.amd
+          file: docker/Dockerfile.amd64
           platforms: linux/amd64
           push: true
           tags: |

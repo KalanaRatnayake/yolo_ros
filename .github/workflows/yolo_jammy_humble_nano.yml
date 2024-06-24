@@ -7,7 +7,7 @@ on:
     branches: 
       - main
     paths:
-      - ".github/workflows/yolo_jammy_humble.yml"
+      - ".github/workflows/yolo_jammy_humble_nano.yml"
       - "docker/Dockerfile.jetson-nano"
       - "docker/workspace_entrypoint.sh"
 
@@ -15,7 +15,7 @@ on:
     branches: 
       - main
     paths:
-      - ".github/workflows/yolo_jammy_humble.yml"
+      - ".github/workflows/yolo_jammy_humble_nano.yml"
       - "docker/Dockerfile.jetson-nano"
       - "docker/workspace_entrypoint.sh"
 
