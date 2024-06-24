@@ -51,7 +51,7 @@ jobs:
 
       - name: Log in to the Container registry
         run: |
-          docker login --username ${{ env.OWNER }} --password ${{ secrets.GH_PAT }} ghcr.io 
+          docker login --username ${{ github.actor }} --password ${{ secrets.GH_PAT }} ghcr.io 
 
       - name: Build and Push
         uses: docker/build-push-action@v5
