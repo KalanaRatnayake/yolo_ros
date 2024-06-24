@@ -40,9 +40,7 @@ WORKDIR ${WORKSPACE_ROOT}/src
 RUN git clone https://github.com/KalanaRatnayake/yolo_ros.git
 RUN git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
 
-RUN cd yolo_ros && \
-    pip3 install -r requirements.txt && \
-    cd ..
+RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.txt
 
 RUN rosdep init && rosdep update && rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
 
