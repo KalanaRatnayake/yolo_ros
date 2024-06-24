@@ -18,13 +18,14 @@ ENV WORKSPACE_ROOT=/yolo
 WORKDIR /
 
 RUN apt-get update -y
-RUN apt-get install -y --no-install-recommends  ros-dev-tools \
+RUN apt-get install -y --no-install-recommends  python3-pip \
+                                                ros-dev-tools \
                                                 ros-$ROS_DISTRO-rmw-cyclonedds-cpp
 
-RUN pip install --upgrade --no-cache-dir torch==1.10.0+cu102 \
-                                         torchvision==0.11.0+cu102 \
-                                         torchaudio==0.10.0 \
-                                         -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip install --upgrade --no-cache-dir torch==1.12.0+cu102 \
+                                         torchvision==0.13.0+cu102 \
+                                         torchaudio==0.12.0 \
+                                         --extra-index-url https://download.pytorch.org/whl/cu102
 
 RUN apt-get clean
 
