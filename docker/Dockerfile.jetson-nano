@@ -4,7 +4,7 @@
 #----
 #---------------------------------------------------------------------------------------------------------------------------
 
-FROM ros:humble-ros-base-jammy as base
+FROM dustynv/ros:humble-pytorch-l4t-r32.7.1 as base
 
 ## Parameters
 ENV WORKSPACE_ROOT=/yolo
@@ -21,11 +21,6 @@ RUN apt-get update -y
 RUN apt-get install -y --no-install-recommends  python3-pip \
                                                 ros-dev-tools \
                                                 ros-$ROS_DISTRO-rmw-cyclonedds-cpp
-
-RUN pip install --upgrade --no-cache-dir torch==1.12.0+cu102 \
-                                         torchvision==0.13.0+cu102 \
-                                         torchaudio==0.12.0 \
-                                         --extra-index-url https://download.pytorch.org/whl/cu102
 
 RUN apt-get clean
 
@@ -81,7 +76,7 @@ RUN apt-get clean
 #---------------------------------------------------------------------------------------------------------------------------
 
 
-FROM ros:humble-ros-base-jammy as final
+FROM dustynv/ros:humble-pytorch-l4t-r32.7.1 as final
 
 ## Parameters
 ENV WORKSPACE_ROOT=/yolo

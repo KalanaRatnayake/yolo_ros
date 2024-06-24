@@ -8,7 +8,7 @@ on:
       - main
     paths:
       - ".github/workflows/yolo_jammy_humble.yml"
-      - "docker/Dockerfile.amd"
+      - "docker/Dockerfile.jetson-nano"
       - "docker/workspace_entrypoint.sh"
 
   pull_request:
@@ -16,7 +16,7 @@ on:
       - main
     paths:
       - ".github/workflows/yolo_jammy_humble.yml"
-      - "docker/Dockerfile.amd"
+      - "docker/Dockerfile.jetson-nano"
       - "docker/workspace_entrypoint.sh"
 
 env:
@@ -57,9 +57,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/Dockerfile.amd
-          platforms: linux/amd64
+          file: docker/Dockerfile.jetson-nano
+          platforms: linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:humble
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:jetson-nano-latest
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:jetson-nano-humble

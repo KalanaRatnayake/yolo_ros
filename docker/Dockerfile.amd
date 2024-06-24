@@ -1,0 +1,108 @@
+#---------------------------------------------------------------------------------------------------------------------------
+#----
+#----   Start base image
+#----
+#---------------------------------------------------------------------------------------------------------------------------
+
+FROM ros:humble-ros-base-jammy as base
+
+## Parameters
+ENV WORKSPACE_ROOT=/yolo
+
+#############################################################################################################################
+#####
+#####   Install Dependencies
+#####
+#############################################################################################################################
+
+WORKDIR /
+
+RUN apt-get update -y
+RUN apt-get install -y --no-install-recommends  python3-pip \
+                                                ros-dev-tools \
+                                                ros-$ROS_DISTRO-rmw-cyclonedds-cpp
+
+RUN pip install --upgrade --no-cache-dir torch==1.10.0+cu102 \
+                                         torchvision==0.11.0+cu102 \
+                                         torchaudio==0.10.0 \
+                                         -f https://download.pytorch.org/whl/torch_stable.html    
+
+RUN apt-get clean
+
+#############################################################################################################################
+#####
+#####   Install Kobuki packages
+#####
+#############################################################################################################################
+
+WORKDIR ${WORKSPACE_ROOT}/src
+
+RUN git clone https://github.com/KalanaRatnayake/yolo_ros.git
+RUN git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
+
+RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.txt
+
+RUN rm /etc/ros/rosdep/sources.list.d/20-default.list
+
+RUN rosdep init && rosdep update && rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
+
+
+#############################################################################################################################
+#####
+#####   Build Kobuki packages
+#####
+#############################################################################################################################
+
+WORKDIR ${WORKSPACE_ROOT}
+
+RUN . /opt/ros/humble/setup.sh && colcon build
+WORKDIR /
+
+
+#############################################################################################################################
+#####
+#####   Remove workspace source and build files that are not relevent to running the system
+#####
+#############################################################################################################################
+
+RUN rm -rf ${WORKSPACE_ROOT}/src
+RUN rm -rf ${WORKSPACE_ROOT}/log
+RUN rm -rf ${WORKSPACE_ROOT}/build
+RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /tmp/*
+
+RUN apt-get clean
+
+
+#---------------------------------------------------------------------------------------------------------------------------
+#----
+#----   Start final release image
+#----
+#---------------------------------------------------------------------------------------------------------------------------
+
+
+FROM ros:humble-ros-base-jammy as final
+
+## Parameters
+ENV WORKSPACE_ROOT=/yolo
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+WORKDIR /
+
+COPY --from=base / /
+
+COPY docker/workspace_entrypoint.sh /workspace_entrypoint.sh
+
+RUN chmod +x /workspace_entrypoint.sh
+
+ENTRYPOINT [ "/workspace_entrypoint.sh" ]
+
+WORKDIR ${WORKSPACE_ROOT}
+
+CMD ["ros2 run yolo_ros yolo_ros --ros-args -p "yolo_model:=$YOLO_MODEL" \
+                                           -p "input_topic:=$INPUT_TOPIC" \
+                                           -p "publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE" \
+                                           -p "output_annotated_topic:=$OUTPUT_ANNOTATED_TOPIC" \
+                                           -p "output_detailed_topic:=$OUTPUT_DETAILED_TOPIC" \
+                                           -p "confidence_threshold:=$CONFIDENCE_THRESHOLD" \
+                                           -p "device:=$DEVICE""]
