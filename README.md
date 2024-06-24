@@ -59,8 +59,8 @@ docker compose -f compose-build.yaml up
 Clone this repository with and install dependencies.
 
 ```bash
-git clone https://github.com/AIResearchLab/yolo_ros.git
-git clone https://github.com/AIResearchLab/yolo_ros_msgs.git
+git clone https://github.com/KalanaRatnayake/yolo_ros.git
+git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
 cd yolo_ros
 pip3 install -r requirements.txt
 ```

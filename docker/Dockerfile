@@ -37,8 +37,8 @@ RUN apt-get clean
 
 WORKDIR ${WORKSPACE_ROOT}/src
 
-RUN git clone https://github.com/AIResearchLab/yolo_ros.git
-RUN git clone https://github.com/AIResearchLab/yolo_ros_msgs.git
+RUN git clone https://github.com/KalanaRatnayake/yolo_ros.git
+RUN git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
 
 RUN cd yolo_ros && \
     pip3 install -r requirements.txt && \
