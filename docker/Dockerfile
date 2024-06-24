@@ -82,13 +82,6 @@ FROM ros:humble-ros-base-jammy as final
 ## Parameters
 ENV WORKSPACE_ROOT=/yolo
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-ENV YOLO_MODEL=yolov9t.pt
-ENV INPUT_TOPIC=/camera/color/image_raw
-ENV PUBLISH_ANNOTATED_IMAGE=False
-ENV OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
-ENV OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
-ENV CONFIDENCE_THRESHOLD=0.25
-ENV DEVICE='0' 
 
 WORKDIR /
 
@@ -101,3 +94,11 @@ RUN chmod +x /workspace_entrypoint.sh
 ENTRYPOINT [ "/workspace_entrypoint.sh" ]
 
 WORKDIR ${WORKSPACE_ROOT}
+
+CMD ["ros2 run yolo_ros yolo_ros --ros-args -p "yolo_model:=$YOLO_MODEL" \
+                                           -p "input_topic:=$INPUT_TOPIC" \
+                                           -p "publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE" \
+                                           -p "output_annotated_topic:=$OUTPUT_ANNOTATED_TOPIC" \
+                                           -p "output_detailed_topic:=$OUTPUT_DETAILED_TOPIC" \
+                                           -p "confidence_threshold:=$CONFIDENCE_THRESHOLD" \
+                                           -p "device:=$DEVICE""]
