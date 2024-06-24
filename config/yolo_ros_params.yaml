@@ -1,9 +1,9 @@
 yolo_ros_node:
   ros__parameters:
-    yolo_model: "yolov10n.pt"
+    yolo_model: "yolov9s.pt"
     input_topic: "/camera/color/image_raw"
     publish_annotated_image: False
     output_annotated_topic: "/yolo_ros/annotated_image"
     output_detailed_topic: "/yolo_ros/detection_result"
     confidence_threshold: 0.25
-    device: "cpu"
+    device: "0"                                             ## 'cpu' for CPU, '0' for gpu
