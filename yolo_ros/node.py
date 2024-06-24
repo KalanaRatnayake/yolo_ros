@@ -1,4 +1,6 @@
 import rclpy
+import time
+
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
@@ -51,6 +53,7 @@ class YoloROS(Node):
 
 
     def image_callback(self, received_msg):
+        start = time.time()
 
         self.input_image = self.bridge.imgmsg_to_cv2(received_msg, desired_encoding="bgr8")
 
@@ -64,22 +67,18 @@ class YoloROS(Node):
         if self.result is not None:
             detection_msg = YoloResult()
 
-            bounding_box = self.result[0].boxes.xywh
-            classes      = self.result[0].boxes.cls
-            conf_score   = self.result[0].boxes.conf
-            name_list    = self.result[0].names
+            detection_msg.header       = received_msg.header
+            detection_msg.source_image = received_msg
 
-            for bbox, cls, conf in zip(bounding_box, classes, conf_score):
+            for bbox, cls, conf in zip(self.result[0].boxes.xywh, self.result[0].boxes.cls, self.result[0].boxes.conf):
+
                 detection_msg.bbx_center_x.append(float(bbox[0]))
                 detection_msg.bbx_center_y.append(float(bbox[1]))
                 detection_msg.bbx_size_w.append(float(bbox[2]))
                 detection_msg.bbx_size_h.append(float(bbox[3]))
                 
-                detection_msg.class_name.append(name_list.get(int(cls)))
+                detection_msg.class_name.append(self.result[0].names.get(int(cls)))
                 detection_msg.confidence.append(float(conf))
-
-            detection_msg.source_image = received_msg
-            detection_msg.header       = received_msg.header
 
             self.publisher_results.publish(detection_msg)
 
@@ -96,7 +95,9 @@ class YoloROS(Node):
                 result_msg = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
                 self.publisher_image.publish(result_msg)
 
-            self.get_logger().debug('Publishing: "%s"' % self.result[0])
+            self.get_logger().info('Publishing: "%s"' % self.result[0])
+
+        self.get_logger().info('Frequency of publishing: "%d"' % (time.time() - start))
 
 
 def main(args=None):
