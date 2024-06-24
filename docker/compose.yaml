@@ -1,6 +1,6 @@
 services:
-  kobuki:
-    image: ghcr.io/airesearchlab/kobuki:humble
+  yolo:
+    image: ghcr.io/kalanaratnayake/yolo:humble
     environment:
       - YOLO_MODEL=yolov9t.pt
       - INPUT_TOPIC=/camera/color/image_raw
@@ -13,4 +13,4 @@ services:
     privileged: true
     network_mode: host
     volumes:
-      - /dev:/dev
+      - /yolo:/yolo
