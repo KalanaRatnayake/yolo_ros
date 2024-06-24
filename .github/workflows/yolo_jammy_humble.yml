@@ -1,4 +1,4 @@
-name: ROS Humble YOLO stack
+name: ROS Humble YOLO stack for amd64 system
 
 on:
   workflow_dispatch:
