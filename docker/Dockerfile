@@ -42,6 +42,8 @@ RUN git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
 
 RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.txt
 
+RUN rm /etc/ros/rosdep/sources.list.d/20-default.list
+
 RUN rosdep init && rosdep update && rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
 
 
