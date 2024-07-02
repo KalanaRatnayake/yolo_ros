@@ -8,7 +8,7 @@ Add the following snippet under `services` to any compose.yaml file to add this 
 
 ```bash
   yolo:
-    image: ghcr.io/kalanaratnayake/yolo:humble
+    image: ghcr.io/kalanaratnayake/yolo-ros:humble
     environment:
       - YOLO_MODEL=yolov9t.pt
       - INPUT_TOPIC=/camera/color/image_raw
@@ -67,8 +67,9 @@ docker compose -f compose-build.yaml up
 ```
 
 <br>
+<br>
 
-## Setup
+## Native Usage
 
 Clone this repository with and install dependencies.
 
@@ -81,30 +82,19 @@ pip3 install -r requirements.txt
 
 <br>
 
-## Build the package
+### Build the package
 
-At the workspace root run,
-
+If required, edit the parameters at `config/yolo_ros_params.yaml' and then at the workspace root run,
 ```bash
 colcon build
 ```
-
 <br>
 
-## Start the system
+### Start the system
 
-### With ros2 launch
 To use the launch file, run,
 
 ```bash
 source ./install/setup.bash
 ros2 launch yolo_ros yolo.launch.py
-```
-
-### With ros2 run
-To start the system run,
-
-```bash
-source ./install/setup.bash
-ros2 run yolo_ros yolo_ros          
 ```
