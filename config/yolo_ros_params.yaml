@@ -6,4 +6,7 @@ yolo_ros_node:
     output_annotated_topic: "/yolo_ros/annotated_image"
     output_detailed_topic: "/yolo_ros/detection_result"
     confidence_threshold: 0.25
-    device: "0"                                             ## 'cpu' for CPU, '0' for gpu
+    device: "0"
+    use_fuse: False
+    use_onnx: False
+    use_tensorrt: False
