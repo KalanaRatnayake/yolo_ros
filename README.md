@@ -29,8 +29,8 @@ Replace `image` parameter with following values for respective systems.
 
 | System       | ROS Version | Value |
 | :---         | :---        | :---  |
-| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo:humble |
-| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo:jetson-nano-humble |
+| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble |
+| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano |
 
 <br>
 
@@ -66,6 +66,8 @@ docker compose -f compose-build.yaml build
 docker compose -f compose-build.yaml up
 ```
 
+<br>
+
 ## Setup
 
 Clone this repository with and install dependencies.
@@ -77,6 +79,8 @@ cd yolo_ros
 pip3 install -r requirements.txt
 ```
 
+<br>
+
 ## Build the package
 
 At the workspace root run,
@@ -84,6 +88,8 @@ At the workspace root run,
 ```bash
 colcon build
 ```
+
+<br>
 
 ## Start the system
 
@@ -101,15 +107,4 @@ To start the system run,
 ```bash
 source ./install/setup.bash
 ros2 run yolo_ros yolo_ros          
-```
-or
-```bash
-source ./install/setup.bash
-ros2 run yolo_ros yolo_ros --ros-args -p "yolo_model:=yolov9t.pt" \
-                                      -p "input_topic:=/camera/color/image_raw" \
-                                      -p "publish_annotated_image:=False" \
-                                      -p "output_annotated_topic:=/yolo_ros/annotated_image" \
-                                      -p "output_detailed_topic:=/yolo_ros/detection_result" \
-                                      -p "confidence_threshold:=0.25" \
-                                      -p "device:='0'"                                 
 ```

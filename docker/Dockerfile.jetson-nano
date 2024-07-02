@@ -4,25 +4,10 @@
 #----
 #---------------------------------------------------------------------------------------------------------------------------
 
-FROM dustynv/ros:humble-pytorch-l4t-r32.7.1 as base
+FROM ghcr.io/kalanaratnayake/foxy-ros-pytorch:1-13-humble-core-r32.7.1 as base
 
 ## Parameters
 ENV WORKSPACE_ROOT=/yolo
-
-#############################################################################################################################
-#####
-#####   Install Dependencies
-#####
-#############################################################################################################################
-
-# WORKDIR /
-
-# RUN apt-get update -y
-# RUN apt-get install -y --no-install-recommends  python3-pip \
-#                                                 ros-dev-tools \
-#                                                 ros-$ROS_DISTRO-rmw-cyclonedds-cpp
-
-# RUN apt-get clean
 
 #############################################################################################################################
 #####
@@ -37,20 +22,17 @@ RUN git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
 
 RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.txt
 
-RUN rm /etc/ros/rosdep/sources.list.d/20-default.list
-
-RUN rosdep init && rosdep update && rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
-
+RUN rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
 
 #############################################################################################################################
 #####
-#####   Build Kobuki packages
+#####   Build Yolo packages
 #####
 #############################################################################################################################
 
 WORKDIR ${WORKSPACE_ROOT}
 
-RUN . /opt/ros/humble/setup.sh && colcon build
+RUN . /opt/ros/humble/install/setup.sh && colcon build
 WORKDIR /
 
 
@@ -63,6 +45,7 @@ WORKDIR /
 RUN rm -rf ${WORKSPACE_ROOT}/src
 RUN rm -rf ${WORKSPACE_ROOT}/log
 RUN rm -rf ${WORKSPACE_ROOT}/build
+
 RUN rm -rf /var/lib/apt/lists/*
 RUN rm -rf /tmp/*
 
@@ -76,7 +59,7 @@ RUN apt-get clean
 #---------------------------------------------------------------------------------------------------------------------------
 
 
-FROM dustynv/ros:humble-pytorch-l4t-r32.7.1 as final
+FROM ghcr.io/kalanaratnayake/foxy-ros-pytorch:1-13-humble-core-r32.7.1 as final
 
 ## Parameters
 ENV WORKSPACE_ROOT=/yolo

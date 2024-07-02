@@ -1,4 +1,4 @@
-name: ROS Humble YOLO stack for AMD64 system
+name: ROS Humble YOLO stack for Jetson Nano systems
 
 on:
   workflow_dispatch:
@@ -7,22 +7,22 @@ on:
     branches: 
       - main
     paths:
-      - ".github/workflows/yolo_jammy_humble.yml"
-      - "docker/Dockerfile.amd64"
+      - ".github/workflows/yolo_humble_j_nano.yml"
+      - "docker/Dockerfile.jetson-nano"
       - "docker/workspace_entrypoint.sh"
 
   pull_request:
     branches: 
       - main
     paths:
-      - ".github/workflows/yolo_jammy_humble.yml"
-      - "docker/Dockerfile.amd64"
+      - ".github/workflows/yolo_humble_j_nano.yml"
+      - "docker/Dockerfile.jetson-nano"
       - "docker/workspace_entrypoint.sh"
 
 env:
   REGISTRY: ghcr.io
   OWNER: kalanaratnayake
-  IMAGE_NAME: yolo
+  IMAGE_NAME: yolo-ros
 
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
@@ -57,9 +57,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/Dockerfile.amd64
-          platforms: linux/amd64
+          file: docker/Dockerfile.jetson-nano
+          platforms: linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:humble
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:latest-j-nano
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.IMAGE_NAME }}:humble-j-nano

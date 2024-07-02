@@ -1,11 +1,23 @@
 #!/bin/bash
 set -e
 
-# start udev
-/lib/systemd/systemd-udevd --daemon
-    
-# setup ros2 environment
-source "/opt/ros/$ROS_DISTRO/setup.bash"
+function ros_source_env() 
+{
+
+}
+
+if [ -f "/opt/ros/$ROS_DISTRO/setup.bash" ]; then
+	echo "sourcing /opt/ros/$ROS_DISTRO/setup.bash"
+
+	source /opt/ros/$ROS_DISTRO/setup.bash
+else
+	echo "notfound /opt/ros/$ROS_DISTRO/setup.bash"
+
+    echo "sourcing /opt/ros/$ROS_DISTRO/install/setup.bash"
+
+    source /opt/ros/$ROS_DISTRO/install/setup.bash
+fi	
+
 source "$WORKSPACE_ROOT/install/setup.bash"
 
 exec "$@"
