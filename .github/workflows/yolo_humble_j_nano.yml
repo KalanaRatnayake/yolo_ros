@@ -1,4 +1,4 @@
-name: ROS Humble YOLO stack for Jetson Nano systems
+name: ROS Humble YOLO Jetson Nano
 
 on:
   workflow_dispatch:
