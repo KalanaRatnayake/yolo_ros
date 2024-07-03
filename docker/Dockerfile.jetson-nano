@@ -12,6 +12,16 @@ ENV WORKSPACE_ROOT=/yolo
 
 #############################################################################################################################
 #####
+#####   Install Dependencies
+#####
+#############################################################################################################################
+
+RUN apt-get update -y
+
+RUN apt-get install -y --no-install-recommends  libboost-python-dev
+
+#############################################################################################################################
+#####
 #####   Install Yolo packages
 #####
 #############################################################################################################################
@@ -25,13 +35,28 @@ RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.txt
 
 #############################################################################################################################
 #####
-#####   Build Yolo packages
+#####   Getdependencies via rosinstall-generator and build Yolo packages
 #####
 #############################################################################################################################
 
+WORKDIR ${WORKSPACE_ROOT}/src
+
+RUN rosinstall_generator --deps --rosdistro ${ROS_DISTRO} vision-opencv \
+                                                        > ros2.${ROS_DISTRO}.yolo.rosinstall
+
+RUN vcs import ${WORKSPACE_ROOT}/src < ros2.${ROS_DISTRO}.yolo.rosinstall
+
 WORKDIR ${WORKSPACE_ROOT}
 
-RUN . /opt/ros/humble/install/setup.sh && colcon build
+RUN rosdep install -y \
+	               --ignore-src \
+	               --from-paths src \
+	               --rosdistro ${ROS_DISTRO} \
+                   --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers"
+
+RUN . /opt/ros/humble/install/setup.sh && colcon build \
+                                            --merge-install \
+                                            --cmake-args -DCMAKE_BUILD_TYPE=Release 
 
 WORKDIR /
 
