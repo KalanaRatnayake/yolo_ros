@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
 
-function ros_source_env() 
-{
-
-}
-
 if [ -f "/opt/ros/$ROS_DISTRO/setup.bash" ]; then
 	echo "sourcing /opt/ros/$ROS_DISTRO/setup.bash"
 
