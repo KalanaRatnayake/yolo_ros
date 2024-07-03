@@ -45,7 +45,7 @@ git clone https://github.com/KalanaRatnayake/yolo_ros.git
 
 Pull the Docker image and start compose (No need to run `docker compose build`)
 ```bash
-cd yolo_ros/docker
+cd src/yolo_ros/docker
 docker compose pull
 docker compose up
 ```
@@ -60,7 +60,7 @@ git clone https://github.com/KalanaRatnayake/yolo_ros.git
 
 Build the Docker image and start compose
 ```bash
-cd yolo_ros/docker
+cd src/yolo_ros/docker
 docker compose -f compose-build.yaml build
 docker compose -f compose-build.yaml up
 ```

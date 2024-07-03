@@ -1,6 +1,6 @@
 services:
   yolo:
-    image: ghcr.io/kalanaratnayake/yolo:humble
+    image: ghcr.io/kalanaratnayake/yolo-ros:humble
     environment:
       - YOLO_MODEL=yolov9t.pt
       - INPUT_TOPIC=/camera/color/image_raw
