@@ -25,7 +25,7 @@ RUN pip3 install --no-cache-dir -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.t
 
 WORKDIR ${WORKSPACE_ROOT}
 
-RUN . /opt/ros/${ROS_DISTRO}/install/setup.bash && colcon build \
+RUN . /opt/ros/${ROS_DISTRO}/install/setup.sh && colcon build \
                                                     --merge-install \
                                                     --cmake-args -DCMAKE_BUILD_TYPE=Release 
 
