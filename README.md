@@ -50,7 +50,7 @@ docker compose pull
 docker compose up
 ```
 
-### Setup for building the container on device running
+### Setup for building the container on device and running
 
 Clone this reposiotory
 
@@ -113,7 +113,7 @@ ros2 launch yolo_ros yolo.launch.py
 | use_fuse                | USE_FUSE                | `False`                     | Whether to use model.fuse() for optimizations |
 
 
-[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to keep maintain downloaded weights so that weights are not downloaded at each startup.
+[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup.
 
 [2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume tag to direct to the folder where the weight file exist. As an example if the weight file is in `/home/user/Downloads/model/yolov9t.pt` then update the volumes tag as follows
 ```bash
