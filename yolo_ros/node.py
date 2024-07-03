@@ -49,7 +49,7 @@ class YoloROS(Node):
         elif self.use_onnx:
             self.init_model     = YOLO(self.yolo_model)                         # Load pytorch model
             self.exported_model = self.init_model.export(format="onnx")         # Export the model to ONXX format. returns '<model_name>.onnx'
-            self.model          = YOLO(self.exported_model)                     # Load the exported TensorRT model
+            self.model          = YOLO(self.exported_model, task="detect")        # Load the exported TensorRT model
 
         elif self.use_fuse:
             self.model          = YOLO(self.yolo_model)
@@ -71,6 +71,8 @@ class YoloROS(Node):
             self.publisher_image    = self.create_publisher(Image, self.output_annotated_topic, 10)
 
         self.subscription  # prevent unused variable warning
+        self.counter = 0
+        self.time = 0
 
 
     def image_callback(self, received_msg):
@@ -120,7 +122,13 @@ class YoloROS(Node):
                 
                 self.publisher_image.publish(result_msg)
 
-        self.get_logger().info('Callback execution: "%d"ms' % ((time.time_ns() - start)/1000000))
+        self.counter += 1
+        self.time += time.time_ns() - start
+
+        if (self.counter == 100):
+            self.get_logger().info('Callback execution time for 100 loops: %d ms' % ((self.time/100)/1000000))
+            self.time = 0
+            self.counter = 0
 
 
 def main(args=None):

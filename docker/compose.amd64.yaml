@@ -1,0 +1,23 @@
+services:
+  yolo:
+    image: ghcr.io/kalanaratnayake/yolo-ros:humble
+    environment:
+      - YOLO_MODEL=yolov9t.pt
+      - INPUT_TOPIC=/camera/color/image_raw
+      - PUBLISH_ANNOTATED_IMAGE=False
+      - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
+      - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
+      - CONFIDENCE_THRESHOLD=0.25
+      - DEVICE='0'
+      - USE_FUSE=False
+      - USE_ONNX=False
+      - USE_TENSORRT=False
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    runtime: nvidia
+    volumes:
+      - yolo:/yolo
+
+volumes:
+  yolo:

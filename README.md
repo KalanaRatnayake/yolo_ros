@@ -2,6 +2,8 @@
 
 ## Docker Usage
 
+To use GPU with docker while on AMD64 systems, install [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) with given instructions.
+
 ### Docker Compose based use
 
 Add the following snippet under `services` to any compose.yaml file to add this container.
@@ -25,6 +27,8 @@ Add the following snippet under `services` to any compose.yaml file to add this 
     network_mode: host
     volumes:
       - /yolo:/yolo
+volumes:
+  yolo:
 ```
 
 Replace `image` parameter with following values for respective systems.
@@ -35,7 +39,7 @@ Replace `image` parameter with following values for respective systems.
 | Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano |
 
 
-### Setup for pulling container from ghcr.io and running
+### AMD64: Setup for pulling container from ghcr.io and running
 
 Clone this reposiotory
 
@@ -46,8 +50,23 @@ git clone https://github.com/KalanaRatnayake/yolo_ros.git
 Pull the Docker image and start compose (No need to run `docker compose build`)
 ```bash
 cd src/yolo_ros/docker
-docker compose pull
-docker compose up
+docker compose -f compose.amd64.yaml pull
+docker compose -f compose.amd64.yaml up
+```
+
+### JetsonNano: Setup for pulling container from ghcr.io and running
+
+Clone this reposiotory
+
+```bash
+git clone https://github.com/KalanaRatnayake/yolo_ros.git
+```
+
+Pull the Docker image and start compose (No need to run `docker compose build`)
+```bash
+cd src/yolo_ros/docker
+docker compose -f compose.jnano.yaml pull
+docker compose -f compose.jnano.yaml up
 ```
 
 <br>
@@ -92,11 +111,10 @@ ros2 launch yolo_ros yolo.launch.py
 | output_annotated_topic  | OUTPUT_ANNOTATED_TOPIC  | `/yolo_ros/annotated_image` | Topic for publishing annotated images uses `sensor_msgs/Image` |
 | output_detailed_topic   | OUTPUT_DETAILED_TOPIC   | `/yolo_ros/detection_result`| Topic for publishing detailed results uses `yolo_ros_msgs/YoloResult` |
 | confidence_threshold    | CONFIDENCE_THRESHOLD    | `0.25`                      | Confidence threshold for predictions |
-| device                  | DEVICE                  | `'0'`                       | `cpu` for CPU, `0` for gpu, [`0`, `1`, ...] if there are multiple GPUs |
+| device                  | DEVICE                  | `'0'`                       | `cpu` for CPU, `0` for gpu, `0,1,2,3` if there are multiple GPUs |
 | use_tensorrt            | USE_TENSORRT            | `False`                     | Whether to use tensorrt based optimizations |
 | use_onnx                | USE_ONNX                | `False`                     | Whether to use onnx based optimizations |
 | use_fuse                | USE_FUSE                | `False`                     | Whether to use model.fuse() for optimizations |
-
 
 [1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup.
 
