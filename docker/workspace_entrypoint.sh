@@ -14,5 +14,6 @@ else
 fi	
 
 source "$WORKSPACE_ROOT/install/setup.bash"
+echo "sourcing $WORKSPACE_ROOT/install/setup.bash"
 
 exec "$@"
