@@ -31,7 +31,7 @@ WORKDIR ${WORKSPACE_ROOT}/src
 RUN git clone https://github.com/KalanaRatnayake/yolo_ros.git
 RUN git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
 
-RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements-jnano.txt
+RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements-jnano.txt --extra-index-url=http://sqrl.nvidia.com/dldata/pip-scratch/ --trusted-host sqrl.nvidia.com
 
 #############################################################################################################################
 #####
