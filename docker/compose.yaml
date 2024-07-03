@@ -16,4 +16,7 @@ services:
     privileged: true
     network_mode: host
     volumes:
-      - /yolo:/yolo
+      - yolo:/yolo
+
+volumes:
+  yolo:

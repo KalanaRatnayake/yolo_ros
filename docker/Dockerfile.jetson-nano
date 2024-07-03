@@ -32,8 +32,8 @@ RUN pip3 install -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.txt
 WORKDIR ${WORKSPACE_ROOT}
 
 RUN . /opt/ros/humble/install/setup.sh && colcon build
-WORKDIR /
 
+WORKDIR /
 
 #############################################################################################################################
 #####
@@ -61,7 +61,9 @@ RUN apt-get clean
 FROM ghcr.io/kalanaratnayake/foxy-ros-pytorch:1-13-humble-core-r32.7.1 as final
 
 ## Parameters
+
 ENV WORKSPACE_ROOT=/yolo
+
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 WORKDIR /

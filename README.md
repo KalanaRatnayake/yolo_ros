@@ -50,21 +50,6 @@ docker compose pull
 docker compose up
 ```
 
-### Setup for building the container on device and running
-
-Clone this reposiotory
-
-```bash
-git clone https://github.com/KalanaRatnayake/yolo_ros.git
-```
-
-Build the Docker image and start compose
-```bash
-cd src/yolo_ros/docker
-docker compose -f compose-build.yaml build
-docker compose -f compose-build.yaml up
-```
-
 <br>
 <br>
 

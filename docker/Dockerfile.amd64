@@ -54,8 +54,8 @@ RUN rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
 WORKDIR ${WORKSPACE_ROOT}
 
 RUN . /opt/ros/humble/setup.sh && colcon build
-WORKDIR /
 
+WORKDIR /
 
 #############################################################################################################################
 #####
@@ -83,7 +83,9 @@ RUN apt-get clean
 FROM ros:humble-ros-base-jammy as final
 
 ## Parameters
+
 ENV WORKSPACE_ROOT=/yolo
+
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 WORKDIR /
