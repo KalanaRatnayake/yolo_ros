@@ -24,9 +24,6 @@ class YoloROS(Node):
         self.declare_parameter("output_detailed_topic",     "/yolo_ros/detection_result")
         self.declare_parameter("confidence_threshold",      0.25)
         self.declare_parameter("device",                    "cpu")
-        self.declare_parameter("use_fuse",                  False)
-        self.declare_parameter("use_onnx",                  False)
-        self.declare_parameter("use_tensorrt",              False)
 
         self.yolo_model                 = self.get_parameter("yolo_model").get_parameter_value().string_value
         self.input_topic                = self.get_parameter("input_topic").get_parameter_value().string_value
@@ -35,28 +32,11 @@ class YoloROS(Node):
         self.output_detailed_topic      = self.get_parameter("output_detailed_topic").get_parameter_value().string_value
         self.confidence_threshold       = self.get_parameter("confidence_threshold").get_parameter_value().double_value
         self.device                     = self.get_parameter("device").get_parameter_value().string_value
-        self.use_onnx                   = self.get_parameter("use_onnx").get_parameter_value().bool_value
-        self.use_tensorrt               = self.get_parameter("use_tensorrt").get_parameter_value().bool_value
-        self.use_fuse                   = self.get_parameter("use_fuse").get_parameter_value().bool_value
 
         self.bridge = CvBridge()
 
-        if self.use_tensorrt:
-            self.init_model     = YOLO(self.yolo_model)                         # Load pytorch model
-            self.exported_model = self.init_model.export(format="engine")       # Export the model to TensorRT format. returns '<model_name>.engine'
-            self.model          = YOLO(self.exported_model)                     # Load the exported TensorRT model
-            
-        elif self.use_onnx:
-            self.init_model     = YOLO(self.yolo_model)                         # Load pytorch model
-            self.exported_model = self.init_model.export(format="onnx")         # Export the model to ONXX format. returns '<model_name>.onnx'
-            self.model          = YOLO(self.exported_model, task="detect")        # Load the exported TensorRT model
-
-        elif self.use_fuse:
-            self.model          = YOLO(self.yolo_model)
-            self.model.fuse()
-
-        else:
-            self.model          = YOLO(self.yolo_model)
+        self.model = YOLO(self.yolo_model)
+        self.model.fuse()
 
         self.subscriber_qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT,
                                                  history=QoSHistoryPolicy.KEEP_LAST,

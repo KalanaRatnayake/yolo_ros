@@ -1,6 +1,6 @@
 services:
   yolo:
-    image: ghcr.io/kalanaratnayake/yolo-ros:humble
+    image: ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano
     environment:
       - YOLO_MODEL=yolov9t.pt
       - INPUT_TOPIC=/camera/color/image_raw
@@ -9,13 +9,10 @@ services:
       - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
       - CONFIDENCE_THRESHOLD=0.25
       - DEVICE='0'
-      - USE_FUSE=False
-      - USE_TENSORRT=False
     restart: unless-stopped
     privileged: true
     network_mode: host
     runtime: nvidia
-    gpus: all
     volumes:
       - yolo:/yolo
 

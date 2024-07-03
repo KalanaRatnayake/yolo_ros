@@ -19,9 +19,6 @@ Add the following snippet under `services` to any compose.yaml file to add this 
       - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
       - CONFIDENCE_THRESHOLD=0.25
       - DEVICE='0'
-      - USE_FUSE=False
-      - USE_ONNX=False
-      - USE_TENSORRT=False
     restart: unless-stopped
     privileged: true
     network_mode: host

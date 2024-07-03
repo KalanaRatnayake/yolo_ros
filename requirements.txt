@@ -1,4 +1,1 @@
 ultralytics
-onnx
-onnxruntime-gpu
-nvidia-tensorrt

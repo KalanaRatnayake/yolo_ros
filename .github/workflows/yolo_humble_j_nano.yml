@@ -36,15 +36,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Check disk space
-        run: df . -h
-
-      - name: Free disk space
-        run: |
-          sudo docker rmi $(docker image ls -aq) >/dev/null 2>&1 || true
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
       - name: Check out the repository
         uses: actions/checkout@v4
 
