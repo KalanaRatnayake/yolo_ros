@@ -1,2 +1,3 @@
 ultralytics
+nvidia-pyindex
 nvidia-tensorrt
