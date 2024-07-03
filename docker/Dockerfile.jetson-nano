@@ -41,7 +41,7 @@ RUN pip3 install --no-cache-dir -r ${WORKSPACE_ROOT}/src/yolo_ros/requirements.t
 
 WORKDIR ${WORKSPACE_ROOT}/src
 
-RUN rosinstall_generator --deps --rosdistro ${ROS_DISTRO} 	cv_bridge \
+RUN . /opt/ros/humble/install/setup.sh && rosinstall_generator --deps --rosdistro ${ROS_DISTRO} 	cv_bridge \
                                                             vision_opencv \
                                                             vision_msgs \
                                                             image_geometry \
@@ -51,7 +51,7 @@ RUN vcs import ${WORKSPACE_ROOT}/src < ros2.${ROS_DISTRO}.yolo.rosinstall
 
 WORKDIR ${WORKSPACE_ROOT}
 
-RUN rosdep install -y \
+RUN . /opt/ros/humble/install/setup.sh && rosdep install -y \
 	               --ignore-src \
 	               --from-paths src \
 	               --rosdistro ${ROS_DISTRO} \
