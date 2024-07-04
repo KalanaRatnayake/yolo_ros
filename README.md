@@ -163,6 +163,6 @@ ros2 launch yolo_ros yolo.launch.py
 | use_onnx                | USE_ONNX                | `False`                     | Whether to use onnx based optimizations |
 | use_fuse                | USE_FUSE                | `False`                     | Whether to use model.fuse() for optimizations |
 
-[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup. Use the snipped in 
+[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup. Use the snipped in [Default models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#default-models-with-docker-compose)
 
-[2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume source tag to direct to the folder where the weight file exist. As an example if the weight file is in `/home/kalana/Downloads/weight/yolov9s.pt` then use the snipped in 
+[2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume source tag to direct to the folder where the weight file exist. As an example if the weight file is in `/home/kalana/Downloads/weight/yolov9s.pt` then use the snipped in [Custom models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#custom-models-with-docker-compose)
