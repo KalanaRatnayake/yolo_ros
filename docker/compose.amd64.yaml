@@ -18,8 +18,7 @@ services:
           devices:
             - driver: nvidia
               count: 1
-              capabilities: [gpu]
-              
+              capabilities: [gpu]   
     volumes:
       - yolo:/yolo
 

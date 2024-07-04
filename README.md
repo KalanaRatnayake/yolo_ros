@@ -4,17 +4,27 @@
 
 To use GPU with docker while on AMD64 systems, install [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) with given instructions.
 
-### Docker Compose based use
+### Supported platforms
 
-Add the following snippet under `services` to any compose.yaml file to add this container.
+Replace `image` parameter in the compose.yml with following values for respective systems.
+
+| System       | ROS Version | Value |
+| :---         | :---        | :---  |
+| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble |
+| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano |
+
+### Default models with Docker Compose
+
+Add the following snippet under `services` to any compose.yaml file to add this container and use an existing model.
 
 ```bash
+services:
   yolo:
     image: ghcr.io/kalanaratnayake/yolo-ros:humble
     environment:
       - YOLO_MODEL=yolov9t.pt
       - INPUT_TOPIC=/camera/color/image_raw
-      - PUBLISH_ANNOTATED_IMAGE=False
+      - PUBLISH_ANNOTATED_IMAGE=True
       - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
       - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
       - CONFIDENCE_THRESHOLD=0.25
@@ -22,19 +32,54 @@ Add the following snippet under `services` to any compose.yaml file to add this 
     restart: unless-stopped
     privileged: true
     network_mode: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]   
     volumes:
-      - /yolo:/yolo
+      - yolo:/yolo
+
 volumes:
   yolo:
 ```
 
-Replace `image` parameter with following values for respective systems.
+### Custom models with Docker Compose
 
-| System       | ROS Version | Value |
-| :---         | :---        | :---  |
-| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble |
-| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano |
+Add the following snippet under `services` to any compose.yaml file to add this container and use an existing model.
 
+```bash
+services:
+  yolo:
+    image: ghcr.io/kalanaratnayake/yolo-ros:humble
+    environment:
+      - YOLO_MODEL=weights/yolov9t.pt
+      - INPUT_TOPIC=/camera/color/image_raw
+      - PUBLISH_ANNOTATED_IMAGE=True
+      - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
+      - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
+      - CONFIDENCE_THRESHOLD=0.25
+      - DEVICE='0'
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]   
+    volumes:
+      - type: bind
+        source: /home/kalana/Downloads/weights
+        target: /yolo/weights
+
+volumes:
+  yolo:
+```
 
 <details> 
 <summary> <h3> AMD64 Setup </h3> </summary>
@@ -118,10 +163,6 @@ ros2 launch yolo_ros yolo.launch.py
 | use_onnx                | USE_ONNX                | `False`                     | Whether to use onnx based optimizations |
 | use_fuse                | USE_FUSE                | `False`                     | Whether to use model.fuse() for optimizations |
 
-[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup.
+[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup. Use the snipped in 
 
-[2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume tag to direct to the folder where the weight file exist. As an example if the weight file is in `/home/user/Downloads/model/yolov9t.pt` then update the volumes tag as follows
-```bash
-    volumes:
-      - /home/user/Downloads/model:/yolo
-```
+[2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume source tag to direct to the folder where the weight file exist. As an example if the weight file is in `/home/kalana/Downloads/weight/yolov9s.pt` then use the snipped in 
