@@ -4,7 +4,7 @@ services:
     environment:
       - YOLO_MODEL=yolov9t.pt
       - INPUT_TOPIC=/camera/color/image_raw
-      - PUBLISH_ANNOTATED_IMAGE=False
+      - PUBLISH_ANNOTATED_IMAGE=True
       - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
       - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
       - CONFIDENCE_THRESHOLD=0.25
@@ -12,7 +12,14 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
-    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+              
     volumes:
       - yolo:/yolo
 

@@ -36,7 +36,8 @@ Replace `image` parameter with following values for respective systems.
 | Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano |
 
 
-### AMD64: Setup for pulling container from ghcr.io and running
+<details> 
+<summary> <h3> AMD64 Setup </h3> </summary>
 
 Clone this reposiotory
 
@@ -51,7 +52,10 @@ docker compose -f compose.amd64.yaml pull
 docker compose -f compose.amd64.yaml up
 ```
 
-### JetsonNano: Setup for pulling container from ghcr.io and running
+</details>
+
+<details> 
+<summary> <h3> JetsonNano Setup </h3> </summary>
 
 Clone this reposiotory
 
@@ -66,7 +70,8 @@ docker compose -f compose.jnano.yaml pull
 docker compose -f compose.jnano.yaml up
 ```
 
-<br>
+</details>
+
 <br>
 
 ## Native Usage
