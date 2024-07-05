@@ -1,6 +1,6 @@
 # yolo_ros
 
-## Docker Usage
+## Docker Usage by adding to compose.yml file
 
 To use GPU with docker while on AMD64 systems, install [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) with given instructions.
 
@@ -11,7 +11,7 @@ Replace `image` parameter in the compose.yml with following values for respectiv
 | System       | ROS Version | Value | Size |
 | :---         | :---        | :---  | :---:|
 | AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble | 5.64 GB |
-| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano | 
+| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano | 3.29GB |
 
 ### Default models with Docker Compose
 
@@ -81,8 +81,7 @@ volumes:
   yolo:
 ```
 
-<details> 
-<summary> <h3> AMD64 Setup </h3> </summary>
+## Docker Usage with this repository
 
 Clone this reposiotory
 
@@ -90,6 +89,9 @@ Clone this reposiotory
 mkdir -p yolo_ws/src && cd yolo_ws/src
 git clone https://github.com/KalanaRatnayake/yolo_ros.git && cd ..
 ```
+
+<details> 
+<summary> <h3> on AMD64 </h3> </summary>
 
 Pull the Docker image and start compose (No need to run `docker compose build`)
 ```bash
@@ -97,18 +99,21 @@ cd src/yolo_ros/docker
 docker compose -f compose.amd64.yaml pull
 docker compose -f compose.amd64.yaml up
 ```
-
 </details>
 
 <details> 
-<summary> <h3> JetsonNano Setup </h3> </summary>
+<summary> <h3> on ARM64 (non-jetson like Raspberry Pi) </h3> </summary>
 
-Clone this reposiotory
-
+Pull the Docker image and start compose (No need to run `docker compose build`)
 ```bash
-mkdir -p yolo_ws/src && cd yolo_ws/src
-git clone https://github.com/KalanaRatnayake/yolo_ros.git && cd ..
+cd src/yolo_ros/docker
+docker compose -f compose.ard64.yaml pull
+docker compose -f compose.ard64.yaml up
 ```
+</details>
+
+<details> 
+<summary> <h3> on JetsonNano </h3> </summary>
 
 Pull the Docker image and start compose (No need to run `docker compose build`)
 ```bash
@@ -116,7 +121,6 @@ cd src/yolo_ros/docker
 docker compose -f compose.jnano.yaml pull
 docker compose -f compose.jnano.yaml up
 ```
-
 </details>
 
 <br>
