@@ -8,10 +8,10 @@ To use GPU with docker while on AMD64 systems, install [nvidia-container-toolkit
 
 Replace `image` parameter in the compose.yml with following values for respective systems.
 
-| System       | ROS Version | Value |
-| :---         | :---        | :---  |
-| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble |
-| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano |
+| System       | ROS Version | Value | Size |
+| :---         | :---        | :---  | :---:|
+| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble | 5.64 GB |
+| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano | 
 
 ### Default models with Docker Compose
 
@@ -87,7 +87,8 @@ volumes:
 Clone this reposiotory
 
 ```bash
-git clone https://github.com/KalanaRatnayake/yolo_ros.git
+mkdir -p yolo_ws/src && cd yolo_ws/src
+git clone https://github.com/KalanaRatnayake/yolo_ros.git && cd ..
 ```
 
 Pull the Docker image and start compose (No need to run `docker compose build`)
@@ -105,7 +106,8 @@ docker compose -f compose.amd64.yaml up
 Clone this reposiotory
 
 ```bash
-git clone https://github.com/KalanaRatnayake/yolo_ros.git
+mkdir -p yolo_ws/src && cd yolo_ws/src
+git clone https://github.com/KalanaRatnayake/yolo_ros.git && cd ..
 ```
 
 Pull the Docker image and start compose (No need to run `docker compose build`)

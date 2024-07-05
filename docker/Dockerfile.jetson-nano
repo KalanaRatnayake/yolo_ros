@@ -61,6 +61,8 @@ ENV WORKSPACE_ROOT=/yolo
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
+ENV LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libgomp.so.1
+
 WORKDIR /
 
 COPY --from=base / /
