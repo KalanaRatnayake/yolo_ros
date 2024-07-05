@@ -6,12 +6,13 @@ To use GPU with docker while on AMD64 systems, install [nvidia-container-toolkit
 
 ### Supported platforms
 
-Replace `image` parameter in the compose.yml with following values for respective systems.
+Replace `image` and 'device' parameter in the compose.yml with following values for respective systems.
 
-| System       | ROS Version | Value | Size |
-| :---         | :---        | :---  | :---:|
-| AMD64        | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble | 5.64 GB |
-| Jetson Nano  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano | 3.29GB |
+| System              | ROS Version | Value for `image`                               | Value for `device`  | Size    |
+| :---                | :---        | :---                                            |  :---               | :---:   |
+| AMD64               | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble         | `cpu`, `0`, `0,1,2` | 5.64 GB |
+| ARM64 (non Jetson)  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble         | `cpu`               | 5.64 GB |
+| Jetson Nano         | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano  | `cpu`, `0`          | 3.29GB  |
 
 ### Default models with Docker Compose
 
