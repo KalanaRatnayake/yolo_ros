@@ -178,7 +178,10 @@ ros2 launch yolo_ros yolo.launch.py
 
 Here is a summary of whether latest models work with yolo_ros node (in docker) on various platforms and the time it takes to execute a single interation of `YoloROS.image_callback` function. Values are measured as an average of 100 executions of the function and Input is a 640x480 RGB image at 30 fps.
 
-| Model | Laptop with RTX3070 mobile GPU (amd64) | Jetson Nano |
+Laptop -> Ryzen 9 16 core with RTX3070 mobile GPU with Ubuntu 22.04
+Jetson Nano -> Overclocked with [Qengineering Ubuntu 20.04 in Headless mode](https://github.com/Qengineering/Jetson-Nano-Ubuntu-20-image?tab=readme-ov-file#headless)
+
+| Model | Laptop (amd64) | Jetson Nano |
 | :---  |  ---: | ---: |
 | `yolov10x.pt` | 27 ms |  975 ms |
 | `yolov10l.pt` | 20 ms |  800 ms |
