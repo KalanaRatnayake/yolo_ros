@@ -173,3 +173,26 @@ ros2 launch yolo_ros yolo.launch.py
 [1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup. Use the snipped in [Default models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#default-models-with-docker-compose)
 
 [2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume source tag to direct to the folder and use docker bind-mounts instead of docker volumes where the weight file exist in the host machine. As an example if the weight file is in `/home/kalana/Downloads/weight/yolov9s.pt` then use the snipped in [Custom models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#custom-models-with-docker-compose)
+
+## Latency description
+
+Here is a summary of whether latest models work with yolo_ros node (in docker) on various platforms and the time it takes to execute a single interation of `YoloROS.image_callback` function. Values are measured as an average of 100 executions of the function and Input is a 640x480 RGB image at 30 fps.
+
+| Model | Laptop with RTX3070 mobile GPU (amd64) | Jetson Nano |
+| :---  |  ---: | ---: |
+| `yolov10x.pt` | 27 ms |  975 ms |
+| `yolov10l.pt` | 20 ms |  800 ms |
+| `yolov10b.pt` | 17 ms |  750 ms |
+| `yolov10m.pt` | 17 ms |  650 ms |
+| `yolov10s.pt` | 14 ms |  210 ms |
+| `yolov10n.pt` | 13 ms |  140 ms |
+| `yolov9e.pt`  | 34 ms | 1600 ms |
+| `yolov9c.pt`  | 21 ms |  700 ms |
+| `yolov9m.pt`  | 20 ms |  500 ms |
+| `yolov9s.pt`  | 25 ms |  300 ms |
+| `yolov9t.pt`  | 24 ms |  180 ms |
+| `yolov8x.pt`  | 28 ms | 2000 ms |
+| `yolov8l.pt`  | 19 ms | 1200 ms |
+| `yolov8m.pt`  | 16 ms |  700 ms |
+| `yolov8s.pt`  | 12 ms |  300 ms |
+| `yolov8n.pt`  | 12 ms |  140 ms |

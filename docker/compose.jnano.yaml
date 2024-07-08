@@ -2,7 +2,7 @@ services:
   yolo:
     image: ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano
     environment:
-      - YOLO_MODEL=yolov9t.pt
+      - YOLO_MODEL=yolov10s.pt
       - INPUT_TOPIC=/camera/color/image_raw
       - PUBLISH_ANNOTATED_IMAGE=True
       - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
