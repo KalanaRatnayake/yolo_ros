@@ -1,0 +1,19 @@
+services:
+  yolo:
+    image: ghcr.io/kalanaratnayake/yolo-ros:humble
+    environment:
+      - YOLO_MODEL=yolov10n.pt
+      - INPUT_TOPIC=/camera/color/image_raw
+      - PUBLISH_ANNOTATED_IMAGE=True
+      - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
+      - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
+      - CONFIDENCE_THRESHOLD=0.25
+      - DEVICE='cpu'
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    volumes:
+      - yolo:/yolo
+
+volumes:
+  yolo:
