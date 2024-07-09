@@ -11,7 +11,6 @@ Replace `image` and 'device' parameter in the compose.yml with following values 
 | System              | ROS Version | Value for `image`                               | Value for `device`  | Size    |
 | :---                | :---        | :---                                            |  :---               | :---:   |
 | AMD64               | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble         | `cpu`, `0`, `0,1,2` | 5.64 GB |
-| ARM64 (non Jetson)  | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble         | `cpu`               | 5.64 GB |
 | Jetson Nano         | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano  | `cpu`, `0`          | 3.29GB  |
 
 ### Default models with Docker Compose
@@ -103,17 +102,6 @@ docker compose -f compose.amd64.yaml up
 </details>
 
 <details> 
-<summary> <h3> on ARM64 (non-jetson like Raspberry Pi) </h3> </summary>
-
-Pull the Docker image and start compose (No need to run `docker compose build`)
-```bash
-cd src/yolo_ros/docker
-docker compose -f compose.ard64.yaml pull
-docker compose -f compose.ard64.yaml up
-```
-</details>
-
-<details> 
 <summary> <h3> on JetsonNano </h3> </summary>
 
 Pull the Docker image and start compose (No need to run `docker compose build`)
@@ -166,9 +154,6 @@ ros2 launch yolo_ros yolo.launch.py
 | output_detailed_topic   | OUTPUT_DETAILED_TOPIC   | `/yolo_ros/detection_result`| Topic for publishing detailed results uses `yolo_ros_msgs/YoloResult` |
 | confidence_threshold    | CONFIDENCE_THRESHOLD    | `0.25`                      | Confidence threshold for predictions |
 | device                  | DEVICE                  | `'0'`                       | `cpu` for CPU, `0` for gpu, `0,1,2,3` if there are multiple GPUs |
-| use_tensorrt            | USE_TENSORRT            | `False`                     | Whether to use tensorrt based optimizations |
-| use_onnx                | USE_ONNX                | `False`                     | Whether to use onnx based optimizations |
-| use_fuse                | USE_FUSE                | `False`                     | Whether to use model.fuse() for optimizations |
 
 [1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup. Use the snipped in [Default models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#default-models-with-docker-compose)
 
