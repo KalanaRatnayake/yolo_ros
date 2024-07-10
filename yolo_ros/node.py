@@ -54,6 +54,9 @@ class YoloROS(Node):
         self.counter = 0
         self.time = 0
 
+        self.detection_msg = Detections()
+        self.class_list_set = False
+
 
     def image_callback(self, received_msg):
         start = time.time_ns()
@@ -67,28 +70,35 @@ class YoloROS(Node):
             verbose=False
         )
 
-        detection_msg = Detections()
+        self.detection_msg.header       = received_msg.header
+        self.detection_msg.source_image = received_msg
 
-        detection_msg.header       = received_msg.header
-        detection_msg.source_image = received_msg
+        if (not self.class_list_set) and (self.result is not None):
+            for i in range(len(self.result[0].names)):
+                self.detection_msg.full_class_list.append(self.result[0].names.get(i))
+                self.class_list_set = True
 
         if self.result is not None:
+            
+            self.detection_msg.detections = True
+
+            self.detection_msg.bbx_center_x = []
+            self.detection_msg.bbx_center_y = []
+            self.detection_msg.bbx_size_w   = []
+            self.detection_msg.bbx_size_h   = []
+            self.detection_msg.class_id     = []
+            self.detection_msg.confidence   = []
+        
             for bbox, cls, conf in zip(self.result[0].boxes.xywh, self.result[0].boxes.cls, self.result[0].boxes.conf):
 
-                detection_msg.bbx_center_x.append(float(bbox[0]))
-                detection_msg.bbx_center_y.append(float(bbox[1]))
-                detection_msg.bbx_size_w.append(float(bbox[2]))
-                detection_msg.bbx_size_h.append(float(bbox[3]))
+                self.detection_msg.bbx_center_x.append(float(bbox[0]))
+                self.detection_msg.bbx_center_y.append(float(bbox[1]))
+                self.detection_msg.bbx_size_w.append(float(bbox[2]))
+                self.detection_msg.bbx_size_h.append(float(bbox[3]))
+                self.detection_msg.class_id.append(int(cls))
+                self.detection_msg.confidence.append(float(conf))
 
-                class_name_msg      = String()
-                class_name_msg.data = self.result[0].names.get(int(cls))
-                
-                detection_msg.class_id.append(int(cls))
-                detection_msg.class_name.append(class_name_msg)
-                detection_msg.confidence.append(float(conf))
-
-            detection_msg.detections = True
-            self.publisher_results.publish(detection_msg)
+            self.publisher_results.publish(self.detection_msg)
 
             if self.publish_annotated_image:
                 self.output_image = self.result[0].plot(
@@ -104,8 +114,16 @@ class YoloROS(Node):
                 
                 self.publisher_image.publish(result_msg)
         else:
-            detection_msg.detections = False
-            self.publisher_results.publish(detection_msg)
+            self.detection_msg.detections = False
+
+            self.detection_msg.bbx_center_x = []
+            self.detection_msg.bbx_center_y = []
+            self.detection_msg.bbx_size_w   = []
+            self.detection_msg.bbx_size_h   = []
+            self.detection_msg.class_id     = []
+            self.detection_msg.confidence   = []
+
+            self.publisher_results.publish(self.detection_msg)
 
         self.counter += 1
         self.time += time.time_ns() - start
