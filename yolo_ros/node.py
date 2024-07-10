@@ -6,7 +6,7 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-from yolo_ros_msgs.msg import YoloResult
+from detection_msgs.msg import Detections
 
 from cv_bridge import CvBridge
 
@@ -45,7 +45,7 @@ class YoloROS(Node):
 
         self.subscription       = self.create_subscription(Image, self.input_topic, self.image_callback, qos_profile=self.subscriber_qos_profile)
         
-        self.publisher_results  = self.create_publisher(YoloResult, self.output_detailed_topic, 10)
+        self.publisher_results  = self.create_publisher(Detections, self.output_detailed_topic, 10)
 
         if self.publish_annotated_image:
             self.publisher_image    = self.create_publisher(Image, self.output_annotated_topic, 10)
@@ -67,12 +67,12 @@ class YoloROS(Node):
             verbose=False
         )
 
+        detection_msg = Detections()
+
+        detection_msg.header       = received_msg.header
+        detection_msg.source_image = received_msg
+
         if self.result is not None:
-            detection_msg = YoloResult()
-
-            detection_msg.header       = received_msg.header
-            detection_msg.source_image = received_msg
-
             for bbox, cls, conf in zip(self.result[0].boxes.xywh, self.result[0].boxes.cls, self.result[0].boxes.conf):
 
                 detection_msg.bbx_center_x.append(float(bbox[0]))
@@ -87,6 +87,7 @@ class YoloROS(Node):
                 detection_msg.class_name.append(class_name_msg)
                 detection_msg.confidence.append(float(conf))
 
+            detection_msg.detections = True
             self.publisher_results.publish(detection_msg)
 
             if self.publish_annotated_image:
@@ -102,6 +103,9 @@ class YoloROS(Node):
                 result_msg = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
                 
                 self.publisher_image.publish(result_msg)
+        else:
+            detection_msg.detections = False
+            self.publisher_results.publish(detection_msg)
 
         self.counter += 1
         self.time += time.time_ns() - start
