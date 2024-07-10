@@ -83,6 +83,7 @@ class YoloROS(Node):
                 class_name_msg      = String()
                 class_name_msg.data = self.result[0].names.get(int(cls))
                 
+                detection_msg.class_id.append(int(cls))
                 detection_msg.class_name.append(class_name_msg)
                 detection_msg.confidence.append(float(conf))
 
