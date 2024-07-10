@@ -1,7 +1,9 @@
 yolo_ros_node:
   ros__parameters:
     yolo_model: "yolov9s.pt"
-    input_topic: "/camera/color/image_raw"
+    input_rgb_topic: "/camera/color/image_raw"
+    input_depth_topic: "/camera/depth/points"
+    subscribe_depth: True
     publish_annotated_image: True
     output_annotated_topic: "/yolo_ros/annotated_image"
     output_detailed_topic: "/yolo_ros/detection_result"

@@ -1,6 +1,9 @@
 import rclpy
 import time
 
+from message_filters import Subscriber
+from message_filters import ApproximateTimeSynchronizer
+
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
@@ -18,7 +21,9 @@ class YoloROS(Node):
         super().__init__('yolo_ros')
 
         self.declare_parameter("yolo_model",                "yolov8n.pt")
-        self.declare_parameter("input_topic",               "/camera/color/image_raw")
+        self.declare_parameter("input_rgb_topic",           "/camera/color/image_raw")
+        self.declare_parameter("input_depth_topic",         "/camera/depth/points")
+        self.declare_parameter("subscribe_depth",           False)
         self.declare_parameter("publish_annotated_image",   False)
         self.declare_parameter("output_annotated_topic",    "/yolo_ros/annotated_image")
         self.declare_parameter("output_detailed_topic",     "/yolo_ros/detection_result")
@@ -26,7 +31,9 @@ class YoloROS(Node):
         self.declare_parameter("device",                    "cpu")
 
         self.yolo_model                 = self.get_parameter("yolo_model").get_parameter_value().string_value
-        self.input_topic                = self.get_parameter("input_topic").get_parameter_value().string_value
+        self.input_rgb_topic            = self.get_parameter("input_rgb_topic").get_parameter_value().string_value
+        self.input_depth_topic          = self.get_parameter("input_depth_topic").get_parameter_value().string_value
+        self.subscribe_depth            = self.get_parameter("subscribe_depth").get_parameter_value().bool_value
         self.publish_annotated_image    = self.get_parameter("publish_annotated_image").get_parameter_value().bool_value
         self.output_annotated_topic     = self.get_parameter("output_annotated_topic").get_parameter_value().string_value
         self.output_detailed_topic      = self.get_parameter("output_detailed_topic").get_parameter_value().string_value
@@ -40,10 +47,17 @@ class YoloROS(Node):
 
         self.subscriber_qos_profile = QoSProfile(reliability=QoSReliabilityPolicy.BEST_EFFORT,
                                                  history=QoSHistoryPolicy.KEEP_LAST,
-                                                 depth=1
-                                                 )
+                                                 depth=1)
 
-        self.subscription       = self.create_subscription(Image, self.input_topic, self.image_callback, qos_profile=self.subscriber_qos_profile)
+        if self.subscribe_depth:
+            self.rgb_message_filter     = Subscriber(self, Image, self.input_rgb_topic, qos_profile=self.subscriber_qos_profile)
+            self.depth_message_filter   = Subscriber(self, Image, self.input_depth_topic, qos_profile=self.subscriber_qos_profile)
+
+            self.synchornizer = ApproximateTimeSynchronizer([self.rgb_message_filter, self.depth_message_filter], 10, 1)
+            self.synchornizer.registerCallback(self.sync_callback)
+
+        else:
+            self.subscription = self.create_subscription(Image, self.input_topic, self.image_callback, qos_profile=self.subscriber_qos_profile)
         
         self.publisher_results  = self.create_publisher(Detections, self.output_detailed_topic, 10)
 
@@ -57,21 +71,19 @@ class YoloROS(Node):
         self.detection_msg = Detections()
         self.class_list_set = False
 
-
-    def image_callback(self, received_msg):
+    def sync_callback(self, rgb_msg, depth_msg):
         start = time.time_ns()
 
-        self.input_image = self.bridge.imgmsg_to_cv2(received_msg, desired_encoding="bgr8")
+        self.input_image = self.bridge.imgmsg_to_cv2(rgb_msg, desired_encoding="bgr8")
 
-        self.result = self.model.predict(
-            source = self.input_image,
-            conf=self.confidence_threshold,
-            device=self.device,
-            verbose=False
-        )
+        self.result = self.model.predict(source = self.input_image,
+                                         conf=self.confidence_threshold,
+                                         device=self.device,
+                                         verbose=False)
 
-        self.detection_msg.header       = received_msg.header
-        self.detection_msg.source_image = received_msg
+        self.detection_msg.header       = rgb_msg.header
+        self.detection_msg.source_rgb   = rgb_msg
+        self.detection_msg.source_depth = depth_msg
 
         if (not self.class_list_set) and (self.result is not None):
             for i in range(len(self.result[0].names)):
@@ -101,16 +113,73 @@ class YoloROS(Node):
             self.publisher_results.publish(self.detection_msg)
 
             if self.publish_annotated_image:
-                self.output_image = self.result[0].plot(
-                                                        conf=True,
-                                                        line_width=1,
-                                                        font_size=1,
-                                                        font="Arial.ttf",
-                                                        labels=True,
-                                                        boxes=True,
-                                                    )
-                    
-                result_msg = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
+                self.output_image = self.result[0].plot(conf=True, line_width=1, font_size=1, font="Arial.ttf", labels=True, boxes=True)
+                result_msg        = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
+                
+                self.publisher_image.publish(result_msg)
+        else:
+            self.detection_msg.detections = False
+
+            self.detection_msg.bbx_center_x = []
+            self.detection_msg.bbx_center_y = []
+            self.detection_msg.bbx_size_w   = []
+            self.detection_msg.bbx_size_h   = []
+            self.detection_msg.class_id     = []
+            self.detection_msg.confidence   = []
+
+            self.publisher_results.publish(self.detection_msg)
+
+        self.counter += 1
+        self.time += time.time_ns() - start
+
+        if (self.counter == 100):
+            self.get_logger().info('Callback execution time for 100 loops: %d ms' % ((self.time/100)/1000000))
+            self.time = 0
+            self.counter = 0
+
+    def image_callback(self, rgb_image):
+        start = time.time_ns()
+
+        self.input_image = self.bridge.imgmsg_to_cv2(rgb_image, desired_encoding="bgr8")
+
+        self.result = self.model.predict(source = self.input_image,
+                                         conf=self.confidence_threshold,
+                                         device=self.device,
+                                         verbose=False)
+
+        self.detection_msg.header       = rgb_image.header
+        self.detection_msg.source_image = rgb_image
+
+        if (not self.class_list_set) and (self.result is not None):
+            for i in range(len(self.result[0].names)):
+                self.detection_msg.full_class_list.append(self.result[0].names.get(i))
+                self.class_list_set = True
+
+        if self.result is not None:
+            
+            self.detection_msg.detections = True
+
+            self.detection_msg.bbx_center_x = []
+            self.detection_msg.bbx_center_y = []
+            self.detection_msg.bbx_size_w   = []
+            self.detection_msg.bbx_size_h   = []
+            self.detection_msg.class_id     = []
+            self.detection_msg.confidence   = []
+        
+            for bbox, cls, conf in zip(self.result[0].boxes.xywh, self.result[0].boxes.cls, self.result[0].boxes.conf):
+
+                self.detection_msg.bbx_center_x.append(float(bbox[0]))
+                self.detection_msg.bbx_center_y.append(float(bbox[1]))
+                self.detection_msg.bbx_size_w.append(float(bbox[2]))
+                self.detection_msg.bbx_size_h.append(float(bbox[3]))
+                self.detection_msg.class_id.append(int(cls))
+                self.detection_msg.confidence.append(float(conf))
+
+            self.publisher_results.publish(self.detection_msg)
+
+            if self.publish_annotated_image:
+                self.output_image = self.result[0].plot(conf=True, line_width=1, font_size=1, font="Arial.ttf", labels=True, boxes=True)
+                result_msg        = self.bridge.cv2_to_imgmsg(self.output_image, encoding="bgr8")
                 
                 self.publisher_image.publish(result_msg)
         else:

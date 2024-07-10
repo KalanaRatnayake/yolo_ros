@@ -23,7 +23,9 @@ services:
     image: ghcr.io/kalanaratnayake/yolo-ros:humble
     environment:
       - YOLO_MODEL=yolov9t.pt
-      - INPUT_TOPIC=/camera/color/image_raw
+      - INPUT_RGB_TOPIC=/camera/color/image_raw
+      - INPUT_DEPTH_TOPIC=/camera/depth/points
+      - SUBSCRIBE_DEPTH=True
       - PUBLISH_ANNOTATED_IMAGE=True
       - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
       - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
@@ -56,7 +58,9 @@ services:
     image: ghcr.io/kalanaratnayake/yolo-ros:humble
     environment:
       - YOLO_MODEL=weights/yolov9t.pt
-      - INPUT_TOPIC=/camera/color/image_raw
+      - INPUT_RGB_TOPIC=/camera/color/image_raw
+      - INPUT_DEPTH_TOPIC=/camera/depth/points
+      - SUBSCRIBE_DEPTH=True
       - PUBLISH_ANNOTATED_IMAGE=True
       - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
       - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
@@ -148,7 +152,9 @@ ros2 launch yolo_ros yolo.launch.py
 | ROS Parameter           | Docker ENV parameter    | Default Value               | Description |
 | :---                    | :---                    | :---:                       | :---        |
 | yolo_model              | YOLO_MODEL              | `yolov9t.pt`                | Model to be used. see [1] for default models and [2] for custom models |
-| input_topic             | INPUT_TOPIC             | `/camera/color/image_raw`   | Topic to subscribe for RGB image. Accepts `sensor_msgs/Image` |
+| subscribe_depth         | SUBSCRIBE_DEPTH         | `True`                      | Whether to subscribe to depth image or not. Use if having a depth camera. A ApproximateTimeSynchronizer is used to sync RGB and Depth images |
+| input_rgb_topic         | INPUT_RGB_TOPIC         | `/camera/color/image_raw`   | Topic to subscribe for RGB image. Accepts `sensor_msgs/Image` |
+| input_depth_topic       | INPUT_DEPTH_TOPIC       | `/camera/depth/points`      | Topic to subscribe for Depth image. Accepts `sensor_msgs/Image` |
 | publish_annotated_image | PUBLISH_ANNOTATED_IMAGE | `False`                     | Whether to publish annotated image, increases callback execution time when set to `True` |
 | output_annotated_topic  | OUTPUT_ANNOTATED_TOPIC  | `/yolo_ros/annotated_image` | Topic for publishing annotated images uses `sensor_msgs/Image` |
 | output_detailed_topic   | OUTPUT_DETAILED_TOPIC   | `/yolo_ros/detection_result`| Topic for publishing detailed results uses `yolo_ros_msgs/YoloResult` |
