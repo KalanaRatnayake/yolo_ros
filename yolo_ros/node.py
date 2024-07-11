@@ -7,8 +7,7 @@ from message_filters import ApproximateTimeSynchronizer
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
-from std_msgs.msg import String
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, PointCloud2
 from detection_msgs.msg import Detections
 
 from cv_bridge import CvBridge
@@ -51,7 +50,7 @@ class YoloROS(Node):
 
         if self.subscribe_depth:
             self.rgb_message_filter     = Subscriber(self, Image, self.input_rgb_topic, qos_profile=self.subscriber_qos_profile)
-            self.depth_message_filter   = Subscriber(self, Image, self.input_depth_topic, qos_profile=self.subscriber_qos_profile)
+            self.depth_message_filter   = Subscriber(self, PointCloud2, self.input_depth_topic, qos_profile=self.subscriber_qos_profile)
 
             self.synchornizer = ApproximateTimeSynchronizer([self.rgb_message_filter, self.depth_message_filter], 10, 1)
             self.synchornizer.registerCallback(self.sync_callback)

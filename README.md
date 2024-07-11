@@ -103,6 +103,13 @@ cd src/yolo_ros/docker
 docker compose -f compose.amd64.yaml pull
 docker compose -f compose.amd64.yaml up
 ```
+
+To clean the system,
+```bash
+cd src/yolo_ros/docker
+docker compose -f compose.amd64.yaml down
+docker volume rm docker_yolo
+```
 </details>
 
 <details> 
