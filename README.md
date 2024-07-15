@@ -22,7 +22,7 @@ services:
   yolo:
     image: ghcr.io/kalanaratnayake/yolo-ros:humble
     environment:
-      - YOLO_MODEL=yolov9t.pt
+      - YOLO_MODEL=yolov10x.pt
       - INPUT_RGB_TOPIC=/camera/color/image_raw
       - INPUT_DEPTH_TOPIC=/camera/depth/points
       - SUBSCRIBE_DEPTH=True
