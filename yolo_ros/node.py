@@ -131,7 +131,7 @@ class YoloROS(Node):
         self.time += time.time_ns() - start
 
         if (self.counter == 100):
-            self.get_logger().info('Callback execution time for 100 loops: %d ms' % ((self.time/100)/1000000))
+            self.get_logger().info('RGB and Depth synchronized callback execution time for 100 loops: %d ms' % ((self.time/100)/1000000))
             self.time = 0
             self.counter = 0
 
@@ -196,7 +196,7 @@ class YoloROS(Node):
         self.time += time.time_ns() - start
 
         if (self.counter == 100):
-            self.get_logger().info('Callback execution time for 100 loops: %d ms' % ((self.time/100)/1000000))
+            self.get_logger().info('RGB callback execution time for 100 loops: %d ms' % ((self.time/100)/1000000))
             self.time = 0
             self.counter = 0
 
