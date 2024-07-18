@@ -6,85 +6,10 @@ To use GPU with docker while on AMD64 systems, install [nvidia-container-toolkit
 
 ### Supported platforms
 
-Replace `image` and 'device' parameter in the compose.yml with following values for respective systems.
-
-| System              | ROS Version | Value for `image`                               | Value for `device`  | Size    |
-| :---                | :---        | :---                                            |  :---               | :---:   |
-| AMD64               | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble         | `cpu`, `0`, `0,1,2` | 5.64 GB |
-| Jetson Nano         | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano  | `cpu`, `0`          | 3.29GB  |
-
-### Default models with Docker Compose
-
-Add the following snippet under `services` to any compose.yaml file to add this container and use an existing model.  An example is available in [AIResearchLab/human-tracking-setup](https://github.com/AIResearchLab/human-tracking-setup)
-
-
-```bash
-services:
-  yolo:
-    image: ghcr.io/kalanaratnayake/yolo-ros:humble
-    environment:
-      - YOLO_MODEL=yolov10x.pt
-      - INPUT_RGB_TOPIC=/camera/color/image_raw
-      - INPUT_DEPTH_TOPIC=/camera/depth/points
-      - SUBSCRIBE_DEPTH=True
-      - PUBLISH_ANNOTATED_IMAGE=True
-      - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
-      - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
-      - CONFIDENCE_THRESHOLD=0.25
-      - DEVICE='0'
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]   
-    volumes:
-      - yolo:/yolo
-
-volumes:
-  yolo:
-```
-
-### Custom models with Docker Compose
-
-Add the following snippet under `services` to any compose.yaml file to add this container and use an existing model.
-
-```bash
-services:
-  yolo:
-    image: ghcr.io/kalanaratnayake/yolo-ros:humble
-    environment:
-      - YOLO_MODEL=weights/yolov9t.pt
-      - INPUT_RGB_TOPIC=/camera/color/image_raw
-      - INPUT_DEPTH_TOPIC=/camera/depth/points
-      - SUBSCRIBE_DEPTH=True
-      - PUBLISH_ANNOTATED_IMAGE=True
-      - OUTPUT_ANNOTATED_TOPIC=/yolo_ros/annotated_image
-      - OUTPUT_DETAILED_TOPIC=/yolo_ros/detection_result
-      - CONFIDENCE_THRESHOLD=0.25
-      - DEVICE='0'
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]   
-    volumes:
-      - type: bind
-        source: /home/kalana/Downloads/weights
-        target: /yolo/weights
-
-volumes:
-  yolo:
-```
+| System      | ROS Version | Value for `image`                               | Value for `device`  | Size    | file  |
+| :---        | :---        | :---                                            |  :---               | :---:   | :---: |
+| AMD64       | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble         | `cpu`, `0`, `0,1,2` | 5.64 GB | docker/compose.amd64.yaml |
+| Jetson Nano | Humble      | ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano  | `cpu`, `0`          | 3.29GB  | docker/compose.jnano.yaml |
 
 ## Docker Usage with this repository
 
@@ -122,6 +47,13 @@ cd src/yolo_ros/docker
 docker compose -f compose.jnano.yaml pull
 docker compose -f compose.jnano.yaml up
 ```
+
+To clean the system,
+```bash
+cd src/yolo_ros/docker
+docker compose -f compose.jnano.yaml down
+docker volume rm docker_yolo
+```
 </details>
 
 <br>
@@ -132,7 +64,7 @@ Clone this repository with and install dependencies.
 
 ```bash
 git clone https://github.com/KalanaRatnayake/yolo_ros.git
-git clone https://github.com/KalanaRatnayake/yolo_ros_msgs.git
+git clone https://github.com/KalanaRatnayake/detection_msgs.git
 cd yolo_ros
 pip3 install -r requirements.txt
 ```
@@ -169,9 +101,9 @@ ros2 launch yolo_ros yolo.launch.py
 | confidence_threshold    | CONFIDENCE_THRESHOLD    | `0.25`                      | Confidence threshold for predictions |
 | device                  | DEVICE                  | `'0'`                       | `cpu` for CPU, `0` for gpu, `0,1,2,3` if there are multiple GPUs |
 
-[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup. Use the snipped in [Default models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#default-models-with-docker-compose)
+[1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup.
 
-[2] Give the custom model weight file's name as `YOLO_MODEL` parameter. Update the docker volume source tag to direct to the folder and use docker bind-mounts instead of docker volumes where the weight file exist in the host machine. As an example if the weight file is in `/home/kalana/Downloads/weight/yolov9s.pt` then use the snipped in [Custom models with Docker Compose](https://github.com/KalanaRatnayake/yolo_ros#custom-models-with-docker-compose)
+[2] Uncomment the commented out `YOLO_MODEL` parameter line and give the custom model weight file's name as `YOLO_MODEL` parameter. Uncomment the docker bind entry that to direct to the `weights` folder and comment the docker volume entry for yolo. Copy the custom weights to the `weights` folder.
 
 ## Latency description
 
