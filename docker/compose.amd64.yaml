@@ -25,7 +25,7 @@ services:
     volumes:
       - type: volume              
         source: yolo
-        target: /yolo/
+        target: /yolo
       # - type: bind                              ---> for custom weights
       #   source: ./weights
       #   target: /yolo/weights
