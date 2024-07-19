@@ -83,4 +83,4 @@ CMD ros2 launch yolo_ros docker.launch.py yolo_model:=$YOLO_MODEL \
                                           annotated_topic:=$YOLO_ANNOTATED_TOPIC \
                                           detailed_topic:=$YOLO_DETAILED_TOPIC \
                                           threshold:=$YOLO_THRESHOLD \
-                                          device:=$YOLO_DEVICE"
+                                          device:=$YOLO_DEVICE
