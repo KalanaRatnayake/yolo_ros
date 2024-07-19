@@ -4,8 +4,8 @@ yolo_ros_node:
     input_rgb_topic: "/camera/color/image_raw"
     input_depth_topic: "/camera/depth/points"
     subscribe_depth: True
-    publish_annotated_image: True
-    output_annotated_topic: "/yolo_ros/annotated_image"
-    output_detailed_topic: "/yolo_ros/detection_result"
+    publish_detection_image: True
+    detect_annotated_topic: "/yolo_ros/annotated_image"
+    detect_detailed_topic: "/yolo_ros/detection_result"
     confidence_threshold: 0.25
     device: "0"
