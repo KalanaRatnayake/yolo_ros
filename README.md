@@ -96,10 +96,10 @@ ros2 launch yolo_ros yolo.launch.py
 | input_rgb_topic         | INPUT_RGB_TOPIC         | `/camera/color/image_raw`   | Topic to subscribe for RGB image. Accepts `sensor_msgs/Image` |
 | input_depth_topic       | INPUT_DEPTH_TOPIC       | `/camera/depth/points`      | Topic to subscribe for Depth image. Accepts `sensor_msgs/Image` |
 | publish_detection_image | PUBLISH_DETECTION_IMAGE | `False`                     | Whether to publish annotated image, increases callback execution time when set to `True` |
-| detect_annotated_topic  | DETECT_ANNOTATED_TOPIC  | `/yolo_ros/annotated_image` | Topic for publishing annotated images uses `sensor_msgs/Image` |
-| detect_detailed_topic   | DETECT_DETAILED_TOPIC   | `/yolo_ros/detection_result`| Topic for publishing detailed results uses `yolo_ros_msgs/YoloResult` |
-| confidence_threshold    | CONFIDENCE_THRESHOLD    | `0.25`                      | Confidence threshold for predictions |
-| device                  | DEVICE                  | `'0'`                       | `cpu` for CPU, `0` for gpu, `0,1,2,3` if there are multiple GPUs |
+| annotated_topic         | YOLO_ANNOTATED_TOPIC  | `/yolo_ros/annotated_image` | Topic for publishing annotated images uses `sensor_msgs/Image` |
+| detailed_topic          | YOLO_DETAILED_TOPIC   | `/yolo_ros/detection_result`| Topic for publishing detailed results uses `yolo_ros_msgs/YoloResult` |
+| threshold               | YOLO_THRESHOLD        | `0.25`                      | Confidence threshold for predictions |
+| device                  | YOLO_DEVICE             | `'0'`                       | `cpu` for CPU, `0` for gpu, `0,1,2,3` if there are multiple GPUs |
 
 [1] If the model is available at [ultralytics models](https://docs.ultralytics.com/models/), It will be downloaded from the cloud at the startup. We are using docker volumes to maintain downloaded weights so that weights are not downloaded at each startup.
 

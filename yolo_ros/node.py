@@ -24,9 +24,9 @@ class YoloROS(Node):
         self.declare_parameter("input_depth_topic",         "/camera/depth/points")
         self.declare_parameter("subscribe_depth",           False)
         self.declare_parameter("publish_detection_image",   False)
-        self.declare_parameter("detect_annotated_topic",    "/yolo_ros/annotated_image")
-        self.declare_parameter("detect_detailed_topic",     "/yolo_ros/detection_result")
-        self.declare_parameter("confidence_threshold",      0.25)
+        self.declare_parameter("annotated_topic",    "/yolo_ros/annotated_image")
+        self.declare_parameter("detailed_topic",     "/yolo_ros/detection_result")
+        self.declare_parameter("threshold",          0.25)
         self.declare_parameter("device",                    "cpu")
 
         self.yolo_model                 = self.get_parameter("yolo_model").get_parameter_value().string_value
@@ -34,9 +34,9 @@ class YoloROS(Node):
         self.input_depth_topic          = self.get_parameter("input_depth_topic").get_parameter_value().string_value
         self.subscribe_depth            = self.get_parameter("subscribe_depth").get_parameter_value().bool_value
         self.publish_detection_image    = self.get_parameter("publish_detection_image").get_parameter_value().bool_value
-        self.detect_annotated_topic     = self.get_parameter("detect_annotated_topic").get_parameter_value().string_value
-        self.detect_detailed_topic      = self.get_parameter("detect_detailed_topic").get_parameter_value().string_value
-        self.confidence_threshold       = self.get_parameter("confidence_threshold").get_parameter_value().double_value
+        self.annotated_topic            = self.get_parameter("annotated_topic").get_parameter_value().string_value
+        self.detailed_topic             = self.get_parameter("detailed_topic").get_parameter_value().string_value
+        self.threshold                  = self.get_parameter("threshold").get_parameter_value().double_value
         self.device                     = self.get_parameter("device").get_parameter_value().string_value
 
         self.bridge = CvBridge()
@@ -56,12 +56,12 @@ class YoloROS(Node):
             self.synchornizer.registerCallback(self.sync_callback)
 
         else:
-            self.subscription = self.create_subscription(Image, self.input_topic, self.image_callback, qos_profile=self.subscriber_qos_profile)
+            self.subscription = self.create_subscription(Image, self.input_rgb_topic, self.image_callback, qos_profile=self.subscriber_qos_profile)
         
-        self.publisher_results  = self.create_publisher(Detections, self.detect_detailed_topic, 10)
+        self.publisher_results  = self.create_publisher(Detections, self.detailed_topic, 10)
 
         if self.publish_detection_image:
-            self.publisher_image    = self.create_publisher(Image, self.detect_annotated_topic, 10)
+            self.publisher_image    = self.create_publisher(Image, self.annotated_topic, 10)
 
         self.counter = 0
         self.time = 0
@@ -75,7 +75,7 @@ class YoloROS(Node):
         self.input_image = self.bridge.imgmsg_to_cv2(rgb_msg, desired_encoding="bgr8")
 
         self.result = self.model.predict(source = self.input_image,
-                                         conf=self.confidence_threshold,
+                                         conf=self.threshold,
                                          device=self.device,
                                          verbose=False)
 
@@ -141,7 +141,7 @@ class YoloROS(Node):
         self.input_image = self.bridge.imgmsg_to_cv2(rgb_image, desired_encoding="bgr8")
 
         self.result = self.model.predict(source = self.input_image,
-                                         conf=self.confidence_threshold,
+                                         conf=self.threshold,
                                          device=self.device,
                                          verbose=False)
 
