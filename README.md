@@ -95,7 +95,7 @@ ros2 launch yolo_ros yolo.launch.py
 | subscribe_depth         | SUBSCRIBE_DEPTH         | `True`                      | Whether to subscribe to depth image or not. Use if having a depth camera. A ApproximateTimeSynchronizer is used to sync RGB and Depth images |
 | input_rgb_topic         | INPUT_RGB_TOPIC         | `/camera/color/image_raw`   | Topic to subscribe for RGB image. Accepts `sensor_msgs/Image` |
 | input_depth_topic       | INPUT_DEPTH_TOPIC       | `/camera/depth/points`      | Topic to subscribe for Depth image. Accepts `sensor_msgs/Image` |
-| publish_detection_image | PUBLISH_DETECTION_IMAGE | `False`                     | Whether to publish annotated image, increases callback execution time when set to `True` |
+| publish_detection_image | PUBLISH_ANNOTATED_IMAGE | `False`                     | Whether to publish annotated image, increases callback execution time when set to `True` |
 | annotated_topic         | YOLO_ANNOTATED_TOPIC  | `/yolo_ros/annotated_image` | Topic for publishing annotated images uses `sensor_msgs/Image` |
 | detailed_topic          | YOLO_DETAILED_TOPIC   | `/yolo_ros/detection_result`| Topic for publishing detailed results uses `yolo_ros_msgs/YoloResult` |
 | threshold               | YOLO_THRESHOLD        | `0.25`                      | Confidence threshold for predictions |

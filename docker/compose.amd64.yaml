@@ -7,7 +7,7 @@ services:
       - INPUT_RGB_TOPIC=/camera/color/image_raw
       - INPUT_DEPTH_TOPIC=/camera/depth/points
       - SUBSCRIBE_DEPTH=True
-      - PUBLISH_DETECTION_IMAGE=True
+      - PUBLISH_ANNOTATED_IMAGE=True
       - YOLO_ANNOTATED_TOPIC=/yolo_ros/annotated_image
       - YOLO_DETAILED_TOPIC=/yolo_ros/detection_result
       - YOLO_THRESHOLD=0.25

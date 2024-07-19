@@ -4,7 +4,7 @@ yolo_ros_node:
     input_rgb_topic: "/camera/color/image_raw"
     input_depth_topic: "/camera/depth/points"
     subscribe_depth: True
-    publish_detection_image: True
+    publish_annotated_image: True
     annotated_topic: "/yolo_ros/annotated_image"
     detailed_topic: "/yolo_ros/detection_result"
     threshold: 0.25
