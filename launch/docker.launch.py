@@ -4,6 +4,7 @@ import ament_index_python.packages
 import launch
 import launch_ros.actions
 from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 import yaml
 
@@ -23,7 +24,18 @@ def generate_launch_description():
 
     yolo_ros_node = launch_ros.actions.Node(package='yolo_ros',
                                               executable='yolo_ros',
-                                              output='both'
+                                              output='both',
+                                              parameters=[{
+                                                  'yolo_model': LaunchConfiguration('yolo_model'),
+                                                  'input_rgb_topic': LaunchConfiguration('input_rgb_topic'),
+                                                  'input_depth_topic': LaunchConfiguration('input_depth_topic'),
+                                                  'subscribe_depth': LaunchConfiguration('subscribe_depth'),
+                                                  'publish_annotated_image': LaunchConfiguration('publish_annotated_image'),
+                                                  'annotated_topic': LaunchConfiguration('annotated_topic'),
+                                                  'detailed_topic': LaunchConfiguration('detailed_topic'),
+                                                  'threshold': LaunchConfiguration('threshold'),
+                                                  'device': LaunchConfiguration('device'),
+                                              }]
                                               )
 
     ld = LaunchDescription()
