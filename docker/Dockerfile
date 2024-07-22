@@ -49,7 +49,7 @@ RUN rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
 
 WORKDIR ${WORKSPACE_ROOT}
 
-RUN . /opt/ros/humble/setup.sh && colcon build
+RUN . /opt/ros/humble/setup.sh && colcon build --merge-install
 
 WORKDIR /
 
