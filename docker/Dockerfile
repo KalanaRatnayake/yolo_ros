@@ -95,12 +95,12 @@ ENTRYPOINT [ "/workspace_entrypoint.sh" ]
 
 WORKDIR ${WORKSPACE_ROOT}
 
-CMD . $WORKSPACE_ROOT/install/setup.bash && ros2 launch yolo_ros docker.launch.py yolo_model:=$YOLO_MODEL \
-                                                                                  input_rgb_topic:=$INPUT_RGB_TOPIC \
-                                                                                  input_depth_topic:=$INPUT_DEPTH_TOPIC \
-                                                                                  subscribe_depth:=$SUBSCRIBE_DEPTH \
-                                                                                  publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE \
-                                                                                  annotated_topic:=$YOLO_ANNOTATED_TOPIC \
-                                                                                  detailed_topic:=$YOLO_DETAILED_TOPIC \
-                                                                                  threshold:=$YOLO_THRESHOLD \
-                                                                                  device:=$YOLO_DEVICE
+CMD ros2 launch yolo_ros docker.launch.py yolo_model:=$YOLO_MODEL \
+                                          input_rgb_topic:=$INPUT_RGB_TOPIC \
+                                          input_depth_topic:=$INPUT_DEPTH_TOPIC \
+                                          subscribe_depth:=$SUBSCRIBE_DEPTH \
+                                          publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE \
+                                          annotated_topic:=$YOLO_ANNOTATED_TOPIC \
+                                          detailed_topic:=$YOLO_DETAILED_TOPIC \
+                                          threshold:=$YOLO_THRESHOLD \
+                                          device:=$YOLO_DEVICE
