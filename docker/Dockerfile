@@ -49,7 +49,7 @@ RUN rosdep install --from-paths ${WORKSPACE_ROOT}/src -y --ignore-src
 
 WORKDIR ${WORKSPACE_ROOT}
 
-RUN . /opt/ros/humble/setup.sh && colcon build --merge-install
+RUN . /opt/ros/humble/setup.sh && colcon build
 
 WORKDIR /
 
@@ -95,12 +95,12 @@ ENTRYPOINT [ "/workspace_entrypoint.sh" ]
 
 WORKDIR ${WORKSPACE_ROOT}
 
-CMD ros2 launch yolo_ros docker.launch.py yolo_model:=$YOLO_MODEL \
-                                          input_rgb_topic:=$INPUT_RGB_TOPIC \
-                                          input_depth_topic:=$INPUT_DEPTH_TOPIC \
-                                          subscribe_depth:=$SUBSCRIBE_DEPTH \
-                                          publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE \
-                                          annotated_topic:=$YOLO_ANNOTATED_TOPIC \
-                                          detailed_topic:=$YOLO_DETAILED_TOPIC \
-                                          threshold:=$YOLO_THRESHOLD \
-                                          device:=$YOLO_DEVICE
+CMD . $WORKSPACE_ROOT/install/setup.bash && ros2 launch yolo_ros docker.launch.py yolo_model:=$YOLO_MODEL \
+                                                                                  input_rgb_topic:=$INPUT_RGB_TOPIC \
+                                                                                  input_depth_topic:=$INPUT_DEPTH_TOPIC \
+                                                                                  subscribe_depth:=$SUBSCRIBE_DEPTH \
+                                                                                  publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE \
+                                                                                  annotated_topic:=$YOLO_ANNOTATED_TOPIC \
+                                                                                  detailed_topic:=$YOLO_DETAILED_TOPIC \
+                                                                                  threshold:=$YOLO_THRESHOLD \
+                                                                                  device:=$YOLO_DEVICE
