@@ -8,10 +8,10 @@ services:
       - INPUT_DEPTH_TOPIC=/camera/depth/points
       - SUBSCRIBE_DEPTH=True
       - PUBLISH_ANNOTATED_IMAGE=True
-      - YOLO_ANNOTATED_TOPIC=/yolo_ros/annotated_image
-      - YOLO_DETAILED_TOPIC=/yolo_ros/detection_result
-      - YOLO_THRESHOLD=0.25
-      - YOLO_DEVICE='0'
+      - ANNOTATED_TOPIC=/yolo_ros/annotated_image
+      - DETAILED_TOPIC=/yolo_ros/detection_result
+      - THRESHOLD=0.25
+      - DEVICE='0'
     restart: unless-stopped
     privileged: true
     network_mode: host

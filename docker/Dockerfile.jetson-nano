@@ -75,12 +75,12 @@ ENTRYPOINT [ "/workspace_entrypoint.sh" ]
 
 WORKDIR ${WORKSPACE_ROOT}
 
-CMD ros2 launch yolo_ros docker.launch.py yolo_model:=$YOLO_MODEL \
-                                          input_rgb_topic:=$INPUT_RGB_TOPIC \
-                                          input_depth_topic:=$INPUT_DEPTH_TOPIC \
-                                          subscribe_depth:=$SUBSCRIBE_DEPTH \
-                                          publish_annotated_image:=$PUBLISH_ANNOTATED_IMAGE \
-                                          annotated_topic:=$YOLO_ANNOTATED_TOPIC \
-                                          detailed_topic:=$YOLO_DETAILED_TOPIC \
-                                          threshold:=$YOLO_THRESHOLD \
-                                          device:=$YOLO_DEVICE
+CMD ros2 run yolo_ros yolo_ros --ros-args -p "yolo_model:=$YOLO_MODEL" \
+                                            -p "input_rgb_topic:=$INPUT_RGB_TOPIC" \
+                                            -p "input_depth_topic:=$INPUT_DEPTH_TOPIC" \
+                                            -p "subscribe_depth:=$SUBSCRIBE_DEPTH" \
+                                            -p "publish_detection_image:=$PUBLISH_DETECTION_IMAGE" \
+                                            -p "annotated_topic:=$ANNOTATED_TOPIC" \
+                                            -p "detailed_topic:=$DETAILED_TOPIC" \
+                                            -p "threshold:=$THRESHOLD" \
+                                            -p "device:=$DEVICE"
