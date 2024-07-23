@@ -2,7 +2,7 @@ services:
   yolo:
     image: ghcr.io/kalanaratnayake/yolo-ros:humble-j-nano
     environment:
-      - YOLO_MODEL=yolov10x.pt
+      - YOLO_MODEL=yolov10n.pt
       # - YOLO_MODEL=weights/yolov9t.pt            ---> for custom weights
       - INPUT_RGB_TOPIC=/camera/color/image_raw
       - INPUT_DEPTH_TOPIC=/camera/depth/points
