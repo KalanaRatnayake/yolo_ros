@@ -8,6 +8,8 @@ services:
       - INPUT_DEPTH_TOPIC=/camera/depth/points
       - SUBSCRIBE_DEPTH=True
       - PUBLISH_ANNOTATED_IMAGE=True
+      - RGB_TOPIC=/yolo_ros/rgb_image
+      - DEPTH_TOPIC=/yolo_ros/depth_image
       - ANNOTATED_TOPIC=/yolo_ros/annotated_image
       - DETAILED_TOPIC=/yolo_ros/detection_result
       - THRESHOLD=0.25
