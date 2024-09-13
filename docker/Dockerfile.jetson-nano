@@ -53,7 +53,7 @@ RUN apt-get clean
 #---------------------------------------------------------------------------------------------------------------------------
 
 
-FROM ghcr.io/kalanaratnayake/foxy-ros-pytorch:1-13-humble-core-r32.7.1 as final
+FROM ghcr.io/kalanaratnayake/jetson-ros-pytorch:1.13-humble-core-r32.7.1 as final
 
 ## Parameters
 
