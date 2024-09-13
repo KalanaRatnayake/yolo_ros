@@ -4,7 +4,7 @@
 #----
 #---------------------------------------------------------------------------------------------------------------------------
 
-FROM ghcr.io/kalanaratnayake/foxy-ros-pytorch:1-13-humble-core-r32.7.1 as base
+FROM ghcr.io/kalanaratnayake/jetson-ros-pytorch:1.13-humble-core-r32.7.1 as base
 
 ## Parameters
 ENV ROS_DISTRO=humble
